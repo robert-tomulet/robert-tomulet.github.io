@@ -353,6 +353,7 @@ nav a.active::before, nav a.active::after { opacity: 1; }
 /* ─── SECTIONS ─── */
 .sec {
   position: relative;
+  z-index: 1;
   padding: 110px 20px;
   border-top: 1px solid var(--line-soft);
 }
@@ -682,6 +683,8 @@ figure.hud-frame figcaption { margin-top: 10px; }
 
 /* ─── FOOTER ─── */
 footer {
+  position: relative;
+  z-index: 1;
   border-top: 1px solid var(--line-soft);
   padding: 26px 22px;
   display: flex;
@@ -778,11 +781,74 @@ footer {
   nav a { font-size: 0.6rem; padding: 5px 8px; }
 }
 
-/* ─── NO MOTION — static page ─── */
+/* ─── MOTION — progressive enhancement ───
+   Hidden/animated starting states are applied only when <html> carries
+   `.js-motion` (added by JS), so the page stays fully readable when they
+   are absent. Motion is forced on regardless of the OS reduced-motion
+   setting. */
+
+/* reveal-on-enter base: visible by default (resilience rule) */
+.rv, .rv-fade { opacity: 1; }
+
+/* permanent background drift — the blueprint grid slides exactly one
+   tile diagonally and loops seamlessly (every layer's tile divides 120px) */
+@keyframes gridDrift {
+  from { background-position: 0 0, 0 0, 0 0, 0 0, 0 0; }
+  to   { background-position: 120px 120px, 120px 120px, 120px 120px, 120px 120px, 120px 120px; }
+}
+
+/* marquee — the duplicated group makes a seamless loop */
+@keyframes marqueeScroll {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+
+/* watermark — slow breath (opacity only, keeps its centering transform) */
+@keyframes watermarkBreathe {
+  0%, 100% { opacity: 0.8; }
+  50%      { opacity: 1; }
+}
+
+/* text / cards rise + fade in from bottom to top */
+.js-motion .rv,
+.js-motion .rv-fade {
+  opacity: 0;
+  transition:
+    opacity 0.9s cubic-bezier(0.22, 0.68, 0.24, 1),
+    transform 0.9s cubic-bezier(0.22, 0.68, 0.24, 1);
+  transition-delay: var(--rv-delay, 0ms);
+}
+.js-motion .rv { transform: translateY(var(--rv-y, 34px)); }
+.js-motion .rv.is-in,
+.js-motion .rv-fade.is-in { opacity: 1; }
+.js-motion .rv.is-in { transform: none; }
+
+.js-motion body { animation: gridDrift 60s linear infinite; }
+.js-motion .marquee-track { animation: marqueeScroll 34s linear infinite; }
+.js-motion .hero-watermark { animation: watermarkBreathe 7s ease-in-out infinite; }
+
+/* ─── BACKGROUND PARTICLES — desktop (fine pointer) only ───
+   Hidden by default so touch/coarse-pointer devices (phones) keep the
+   exact current look. */
+#bg-fx { display: none; }
+
+@media (hover: hover) and (pointer: fine) {
+  #bg-fx {
+    display: block;
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+    pointer-events: none;
+  }
+}
 </style>
 </head>
 <body>
 
+<!-- ─── BACKGROUND PARTICLE FIELD (desktop / fine-pointer only) ─── -->
+<canvas id="bg-fx" aria-hidden="true"></canvas>
 
 <!-- ─── NAV — status bar ─── -->
 <nav id="navbar">
@@ -1183,6 +1249,195 @@ document.addEventListener('keydown', function (e) {
   if (e.key === 'ArrowLeft') openLightbox(lbIndex - 1);
   if (e.key === 'ArrowRight') openLightbox(lbIndex + 1);
 });
+
+/* ─── MOTION — permanent background drift + reveal on enter ───
+   The hidden starting states live behind `.js-motion` on <html>, which JS
+   always adds, so the page stays fully readable when JS is unavailable.
+   Animations play regardless of the OS reduced-motion setting. */
+document.documentElement.classList.add('js-motion');
+
+var pending = [];
+
+function queueReveal(selector, opts) {
+  opts = opts || {};
+  Array.prototype.forEach.call(document.querySelectorAll(selector), function (el, i) {
+    el.classList.add(opts.fade ? 'rv-fade' : 'rv');
+    var delay = (opts.base || 0) + i * (opts.step || 0);
+    if (delay) el.style.setProperty('--rv-delay', delay + 'ms');
+    if (opts.rise) el.style.setProperty('--rv-y', opts.rise + 'px');
+    pending.push(el);
+  });
+}
+
+/* hero — plays on load, staggered top → bottom */
+queueReveal('.hero-logo-wrap', { base: 150 });
+queueReveal('.hero-tag',       { base: 340 });
+queueReveal('.hero .btn',      { base: 520 });
+queueReveal('.hud-corner',     { base: 760, step: 90, fade: true });
+queueReveal('.scroll-ind',     { base: 1100, fade: true });
+
+/* sections — reveal as they scroll into view */
+queueReveal('.sec-head',           {});
+queueReveal('.lead',               { base: 90 });
+queueReveal('.stat-item',          { step: 110 });
+queueReveal('.department-card',    { step: 90 });
+queueReveal('.collage > figure',   { step: 110 });
+queueReveal('.team-grid > figure', { step: 110 });
+queueReveal('.season-panel',       {});
+queueReveal('.event-card',         { step: 120 });
+queueReveal('.dossier',            {});
+queueReveal('.contact-row',        { step: 90 });
+
+if ('IntersectionObserver' in window) {
+  var revealIO = new IntersectionObserver(function (entries) {
+    entries.forEach(function (entry) {
+      if (!entry.isIntersecting) return;
+      entry.target.classList.add('is-in');
+      revealIO.unobserve(entry.target);
+    });
+  }, { threshold: 0, rootMargin: '0px 0px -8% 0px' });
+  pending.forEach(function (el) { revealIO.observe(el); });
+} else {
+  /* no observer support → reveal everything immediately */
+  pending.forEach(function (el) { el.classList.add('is-in'); });
+}
+
+/* ─── BACKGROUND PARTICLES — desktop (fine pointer) only ───
+   A connected constellation in the site palette: the dots drift, link to
+   their close neighbours, and are pushed away by the cursor, so the mesh
+   warps and glows around the pointer. Both the cursor and the dots are
+   eased, so the reaction is smooth and trails slightly behind the mouse.
+   Not created on touch/coarse-pointer devices, so phones keep exactly the
+   current look. */
+var bgFx = document.getElementById('bg-fx');
+var mouseFine = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+
+if (bgFx && mouseFine && bgFx.getContext) {
+  (function () {
+    var ctx = bgFx.getContext('2d');
+    var dpr = Math.min(window.devicePixelRatio || 1, 2);
+    var w = 0, h = 0;
+    var parts = [];
+    var tx = -9999, ty = -9999, sx = -9999, sy = -9999, mOn = false;
+    var R = 170, R2 = R * R;                 /* cursor influence radius */
+    var LINK = 140, LINK2 = LINK * LINK;     /* neighbour link distance */
+    var COL = ['195,17,12', '230,80,27'];    /* red / orange */
+    var MOUSE_EASE = 0.09;                   /* cursor trail — lower = longer delay */
+    var MOVE_EASE = 0.06;                    /* dot smoothing — lower = smoother/slower */
+
+    function build() {
+      var n = Math.min(130, Math.max(45, Math.round((w * h) / 11000)));
+      parts = [];
+      for (var i = 0; i < n; i++) {
+        var bvx = (Math.random() - 0.5) * 0.22;  /* slow base drift */
+        var bvy = (Math.random() - 0.5) * 0.22;
+        parts.push({
+          x: Math.random() * w,
+          y: Math.random() * h,
+          bvx: bvx, bvy: bvy,                  /* base drift (resting velocity) */
+          vx: bvx, vy: bvy,                    /* eased actual velocity */
+          r: 1.6 + Math.random() * 2.0,
+          near: 0,
+          c: COL[i % COL.length]
+        });
+      }
+    }
+
+    function resize() {
+      w = window.innerWidth;
+      h = window.innerHeight;
+      bgFx.width = Math.floor(w * dpr);
+      bgFx.height = Math.floor(h * dpr);
+      bgFx.style.width = w + 'px';
+      bgFx.style.height = h + 'px';
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      build();
+    }
+
+    function frame() {
+      ctx.clearRect(0, 0, w, h);
+
+      /* ease the influence point toward the real cursor → reaction trails */
+      if (mOn) {
+        sx += (tx - sx) * MOUSE_EASE;
+        sy += (ty - sy) * MOUSE_EASE;
+      }
+
+      /* 1) ease each dot's velocity toward (base drift + cursor repulsion) */
+      for (var i = 0; i < parts.length; i++) {
+        var p = parts[i];
+        p.near = 0;
+        var wantedX = p.bvx, wantedY = p.bvy;
+
+        if (mOn) {
+          var dx = p.x - sx, dy = p.y - sy;
+          var d2 = dx * dx + dy * dy;
+          if (d2 < R2) {
+            var d = Math.sqrt(d2) || 0.0001;
+            var f = 1 - d / R;                /* 0 at edge → 1 at cursor */
+            var push = f * 2.6;               /* wanted escape speed */
+            wantedX += (dx / d) * push;
+            wantedY += (dy / d) * push;
+            p.near = f;
+          }
+        }
+
+        p.vx += (wantedX - p.vx) * MOVE_EASE;  /* smooth acceleration */
+        p.vy += (wantedY - p.vy) * MOVE_EASE;
+        p.x += p.vx;
+        p.y += p.vy;
+
+        if (p.x < -14) p.x = w + 14;
+        else if (p.x > w + 14) p.x = -14;
+        if (p.y < -14) p.y = h + 14;
+        else if (p.y > h + 14) p.y = -14;
+      }
+
+      /* 2) links between close neighbours — warp + glow near the cursor */
+      ctx.lineWidth = 1;
+      for (var a = 0; a < parts.length; a++) {
+        var pa = parts[a];
+        for (var b = a + 1; b < parts.length; b++) {
+          var pb = parts[b];
+          var lx = pa.x - pb.x, ly = pa.y - pb.y;
+          var l2 = lx * lx + ly * ly;
+          if (l2 > LINK2) continue;           /* too far apart → no link */
+          var la = (1 - Math.sqrt(l2) / LINK) * 0.34;
+          var boost = pa.near > pb.near ? pa.near : pb.near;
+          if (boost) la += boost * 0.5;
+          if (la <= 0.01) continue;
+          ctx.strokeStyle = 'rgba(230,80,27,' + la.toFixed(3) + ')';
+          ctx.beginPath();
+          ctx.moveTo(pa.x, pa.y);
+          ctx.lineTo(pb.x, pb.y);
+          ctx.stroke();
+        }
+      }
+
+      /* 3) dots on top */
+      for (var k = 0; k < parts.length; k++) {
+        var q = parts[k];
+        var qa = 0.5 + q.near * 0.45;         /* brighter near cursor */
+        ctx.beginPath();
+        ctx.fillStyle = 'rgba(' + q.c + ',' + qa.toFixed(3) + ')';
+        ctx.arc(q.x, q.y, q.r, 0, 6.2832);
+        ctx.fill();
+      }
+
+      requestAnimationFrame(frame);
+    }
+
+    window.addEventListener('resize', resize, { passive: true });
+    window.addEventListener('mousemove', function (e) {
+      tx = e.clientX; ty = e.clientY;
+      if (!mOn) { mOn = true; sx = tx; sy = ty; }  /* snap on (re)entry, then trail */
+    }, { passive: true });
+    document.addEventListener('mouseleave', function () { mOn = false; });
+
+    resize();
+    requestAnimationFrame(frame);
+  })();
+}
 
 })();
 </script>
