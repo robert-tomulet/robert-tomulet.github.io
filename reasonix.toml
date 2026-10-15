@@ -1,2 +1,0 @@
-[permissions]
-allow = ["Bash(cp /home/robert/droplet_www/acesrobotics.dev/html/index2.html:*)", "Edit"]

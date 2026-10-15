@@ -1,0 +1,13 @@
+.env
+*.service
+*.conf
+*.sh
+*.db
+*.sqlite
+ses
+requirements.txt
+run.py
+wsgi.py
+reasonix.toml
+venv/
+__pycache__/
