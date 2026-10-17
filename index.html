@@ -1768,7 +1768,78 @@ footer {
 
 var reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-/* ─── ANCHOR links (native smooth scroll, no JS animation libs) ─── */
+/* ─── ANCHOR links & HASH navigation (immune to lazy-image layout shift on mobile) ─── */
+function jumpToTarget(target, smooth) {
+  if (!target) return;
+  if (smooth && !reducedMotion) {
+    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    return;
+  }
+  var html = document.documentElement;
+  var prev = html.style.scrollBehavior;
+  html.style.scrollBehavior = 'auto';
+  var top = target.getBoundingClientRect().top + window.pageYOffset;
+  window.scrollTo(0, top);
+  html.style.scrollBehavior = prev;
+}
+
+/* Keep a hash target (e.g. /#suport from /suport) pinned at the top of the
+   viewport while lazy-loaded images above it finish decoding and expanding,
+   releasing immediately once the user touches/scrolls the page. */
+var pinnedTarget = null;
+var pinTimer = null;
+var pinRO = null;
+
+function stopPinning() {
+  pinnedTarget = null;
+  if (pinTimer) { clearTimeout(pinTimer); pinTimer = null; }
+  if (pinRO) { pinRO.disconnect(); pinRO = null; }
+  window.removeEventListener('touchstart', stopPinning);
+  window.removeEventListener('wheel', stopPinning);
+  window.removeEventListener('mousedown', stopPinning);
+  window.removeEventListener('keydown', stopPinning);
+}
+
+function pinToHashTarget(target, smoothFirst) {
+  if (!target) return;
+  stopPinning();
+  pinnedTarget = target;
+  jumpToTarget(target, smoothFirst);
+
+  /* Force-load lazy images preceding the target so mobile doesn't shift mid-scroll */
+  var allImgs = document.querySelectorAll('img[loading="lazy"]');
+  var targetTop = target.getBoundingClientRect().top + window.pageYOffset;
+  Array.prototype.forEach.call(allImgs, function (img) {
+    var imgTop = img.getBoundingClientRect().top + window.pageYOffset;
+    if (imgTop <= targetTop + 400) {
+      img.loading = 'eager';
+      if (!img.complete) {
+        img.addEventListener('load', function () {
+          if (pinnedTarget === target) jumpToTarget(target, false);
+        }, { once: true });
+      }
+    }
+  });
+
+  if ('ResizeObserver' in window) {
+    pinRO = new ResizeObserver(function () {
+      if (pinnedTarget === target) jumpToTarget(target, false);
+    });
+    pinRO.observe(document.body);
+  }
+
+  /* Stop pinning as soon as the user interacts or after 8s settle window */
+  setTimeout(function () {
+    if (!pinnedTarget) return;
+    window.addEventListener('touchstart', stopPinning, { passive: true, once: true });
+    window.addEventListener('wheel', stopPinning, { passive: true, once: true });
+    window.addEventListener('mousedown', stopPinning, { passive: true, once: true });
+    window.addEventListener('keydown', stopPinning, { passive: true, once: true });
+  }, 60);
+
+  pinTimer = setTimeout(stopPinning, 8000);
+}
+
 document.querySelectorAll('a[href^="#"]').forEach(function (a) {
   a.addEventListener('click', function (e) {
     var id = a.getAttribute('href');
@@ -1776,9 +1847,24 @@ document.querySelectorAll('a[href^="#"]').forEach(function (a) {
     var target = document.querySelector(id);
     if (!target) return;
     e.preventDefault();
-    target.scrollIntoView({ behavior: reducedMotion ? 'auto' : 'smooth', block: 'start' });
+    if (history.replaceState) history.replaceState(null, '', id);
+    pinToHashTarget(target, true);
   });
 });
+
+function handleInitialHash() {
+  if (!window.location.hash || window.location.hash.length < 2) return;
+  var target = null;
+  try { target = document.querySelector(window.location.hash); } catch (err) {}
+  if (!target) return;
+  pinToHashTarget(target, false);
+}
+
+handleInitialHash();
+window.addEventListener('load', function () {
+  if (pinnedTarget) jumpToTarget(pinnedTarget, false);
+});
+window.addEventListener('hashchange', handleInitialHash);
 
 /* ─── NAV: active section marker only (no motion) ─── */
 var sections = document.querySelectorAll('section[id]');
