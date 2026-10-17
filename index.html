@@ -587,11 +587,412 @@ figure.hud-frame figcaption { margin-top: 10px; }
   max-width: 360px;
 }
 
-/* ─── SUPORT — dossier card ─── */
+/* ─── SUPORT — configurator, ROI calculator & dossier card ─── */
+.spons-grid {
+  display: grid;
+  grid-template-columns: 1.35fr 0.85fr;
+  gap: 28px;
+  margin-top: 32px;
+  align-items: start;
+}
+
+.spons-panel {
+  padding: 28px 26px 30px;
+  border: 1px solid var(--line-soft);
+  background:
+    linear-gradient(var(--bk), var(--bk)) top left / 16px 1px,
+    linear-gradient(var(--bk), var(--bk)) top left / 1px 16px,
+    linear-gradient(var(--bk), var(--bk)) top right / 16px 1px,
+    linear-gradient(var(--bk), var(--bk)) top right / 1px 16px,
+    linear-gradient(var(--bk), var(--bk)) bottom left / 16px 1px,
+    linear-gradient(var(--bk), var(--bk)) bottom left / 1px 16px,
+    linear-gradient(var(--bk), var(--bk)) bottom right / 16px 1px,
+    linear-gradient(var(--bk), var(--bk)) bottom right / 1px 16px,
+    linear-gradient(rgba(116, 10, 3, 0.14), rgba(40, 9, 5, 0.6));
+  background-repeat: no-repeat;
+}
+
+.spons-panel-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 18px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--line-soft);
+}
+
+/* 5-tier selector tabs (Supporter, ♥, ♠, ♣, ♦) */
+.tier-tabs {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 8px;
+  margin-bottom: 24px;
+}
+.tier-tab {
+  appearance: none;
+  background: rgba(40, 9, 5, 0.75);
+  border: 1px solid var(--line);
+  color: var(--text);
+  padding: 12px 6px;
+  border-radius: 2px;
+  cursor: pointer;
+  text-align: center;
+  transition: border-color 0.2s, background 0.2s, transform 0.2s, box-shadow 0.2s;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+.tier-tab:hover {
+  border-color: var(--orange);
+  background: rgba(195, 17, 12, 0.14);
+}
+.tier-tab.active {
+  border-color: var(--red);
+  background: linear-gradient(180deg, rgba(195, 17, 12, 0.35), rgba(116, 10, 3, 0.35));
+  box-shadow: 0 0 18px rgba(195, 17, 12, 0.28), inset 0 0 0 1px rgba(230, 80, 27, 0.35);
+}
+.tier-tab .t-suit {
+  font-size: 1.25rem;
+  line-height: 1;
+  color: var(--red);
+}
+.tier-tab.active .t-suit {
+  color: var(--orange);
+}
+.tier-tab .t-name {
+  font-family: var(--grotesk);
+  font-weight: 700;
+  font-size: 0.74rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #fff;
+}
+.tier-tab .t-price {
+  font-family: var(--mono);
+  font-size: 0.6rem;
+  letter-spacing: 0.08em;
+  color: #b8aba5;
+}
+.tier-tab.active .t-price {
+  color: #ffd9d2;
+}
+
+/* Interactive budget slider */
+.slider-box {
+  background: rgba(20, 4, 2, 0.55);
+  border: 1px solid var(--line-soft);
+  padding: 18px 20px 16px;
+  border-radius: 3px;
+  margin-bottom: 24px;
+}
+.slider-readout {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+.slider-amount-wrap {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.slider-amount-ron {
+  font-family: var(--display);
+  font-size: clamp(1.8rem, 3.5vw, 2.5rem);
+  color: #fff;
+  line-height: 1;
+}
+.slider-amount-eur {
+  font-family: var(--mono);
+  font-size: 0.82rem;
+  color: var(--orange);
+  letter-spacing: 0.1em;
+}
+.slider-tier-badge {
+  font-family: var(--mono);
+  font-size: 0.64rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  padding: 5px 10px;
+  background: var(--red);
+  color: #fff;
+  border-radius: 2px;
+}
+
+.budget-slider {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 6px;
+  border-radius: 3px;
+  background: linear-gradient(90deg, var(--red) 0%, var(--orange) var(--pct, 30%), rgba(195, 17, 12, 0.2) var(--pct, 30%));
+  outline: none;
+  cursor: pointer;
+}
+.budget-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 22px;
+  height: 22px;
+  border-radius: 2px;
+  background: var(--orange);
+  border: 2px solid #fff;
+  box-shadow: 0 0 12px rgba(230, 80, 27, 0.7);
+  cursor: grab;
+  transition: transform 0.15s, background 0.15s;
+}
+.budget-slider::-webkit-slider-thumb:hover {
+  transform: scale(1.12);
+  background: var(--red);
+}
+.budget-slider::-moz-range-thumb {
+  width: 22px;
+  height: 22px;
+  border-radius: 2px;
+  background: var(--orange);
+  border: 2px solid #fff;
+  box-shadow: 0 0 12px rgba(230, 80, 27, 0.7);
+  cursor: grab;
+  transition: transform 0.15s, background 0.15s;
+}
+
+.slider-ticks {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 10px;
+  font-family: var(--mono);
+  font-size: 0.58rem;
+  letter-spacing: 0.08em;
+  color: rgba(224, 213, 208, 0.48);
+}
+.slider-ticks button {
+  background: none;
+  border: none;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+  padding: 2px 4px;
+}
+.slider-ticks button:hover,
+.slider-ticks button.tick-on {
+  color: var(--orange);
+}
+
+/* Perks checklist */
+.perks-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.perk-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 11px 14px;
+  border: 1px solid rgba(195, 17, 12, 0.12);
+  border-radius: 2px;
+  background: rgba(20, 4, 2, 0.35);
+  transition: border-color 0.22s, background 0.22s, opacity 0.22s, transform 0.22s;
+  cursor: pointer;
+}
+.perk-item.unlocked {
+  border-color: rgba(195, 17, 12, 0.55);
+  background: linear-gradient(90deg, rgba(195, 17, 12, 0.22), rgba(116, 10, 3, 0.1));
+}
+.perk-item.locked {
+  opacity: 0.46;
+}
+.perk-item.locked:hover {
+  opacity: 0.78;
+  border-color: rgba(230, 80, 27, 0.35);
+}
+.perk-status {
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  width: 26px;
+  height: 26px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(195, 17, 12, 0.35);
+  color: rgba(224, 213, 208, 0.45);
+  flex-shrink: 0;
+  border-radius: 2px;
+}
+.perk-item.unlocked .perk-status {
+  background: var(--red);
+  border-color: var(--orange);
+  color: #fff;
+  box-shadow: 0 0 10px rgba(195, 17, 12, 0.4);
+}
+.perk-text {
+  flex: 1;
+  font-size: 0.88rem;
+  line-height: 1.45;
+  color: var(--text);
+}
+.perk-item.unlocked .perk-text {
+  color: #fff;
+}
+.perk-tier-tag {
+  font-family: var(--mono);
+  font-size: 0.58rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  padding: 3px 7px;
+  border: 1px solid rgba(195, 17, 12, 0.3);
+  color: #b8aba5;
+  white-space: nowrap;
+  border-radius: 2px;
+}
+.perk-item.unlocked .perk-tier-tag {
+  border-color: rgba(230, 80, 27, 0.5);
+  color: var(--orange);
+  background: rgba(230, 80, 27, 0.08);
+}
+
+/* Right column: Tax Deduction & Contact Action + Dossier */
+.spons-side {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.tax-box {
+  background: rgba(195, 17, 12, 0.08);
+  border: 1px solid rgba(230, 80, 27, 0.35);
+  border-radius: 3px;
+  padding: 16px 18px;
+  margin-bottom: 18px;
+}
+.tax-badge {
+  display: inline-block;
+  font-family: var(--mono);
+  font-size: 0.6rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--orange);
+  margin-bottom: 6px;
+}
+.tax-title {
+  font-family: var(--grotesk);
+  font-weight: 700;
+  font-size: 0.98rem;
+  color: #fff;
+  margin-bottom: 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+.tax-desc {
+  font-size: 0.83rem;
+  color: #cfc4be;
+  line-height: 1.55;
+  margin-bottom: 14px;
+}
+.tax-calc-rows {
+  border-top: 1px solid rgba(195, 17, 12, 0.25);
+  padding-top: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  font-family: var(--mono);
+  font-size: 0.68rem;
+}
+.tax-calc-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  color: #c5bdb8;
+}
+.tax-calc-row strong {
+  color: #fff;
+  text-align: right;
+}
+.tax-calc-row.highlight strong {
+  color: var(--orange);
+  font-size: 0.78rem;
+}
+
+.spons-form-fields {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+.spons-input-group label {
+  display: block;
+  font-family: var(--mono);
+  font-size: 0.58rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: rgba(224, 213, 208, 0.65);
+  margin-bottom: 4px;
+}
+.spons-input {
+  width: 100%;
+  padding: 10px 12px;
+  background: rgba(20, 4, 2, 0.7);
+  border: 1px solid var(--line);
+  border-radius: 2px;
+  color: #fff;
+  font-family: var(--mono);
+  font-size: 0.76rem;
+}
+.spons-input::placeholder {
+  color: rgba(224, 213, 208, 0.32);
+}
+.spons-input:focus {
+  outline: none;
+  border-color: var(--orange);
+}
+
+.spons-cta-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.spons-cta-btn {
+  width: 100%;
+  text-align: center;
+  padding: 15px 20px;
+  background: var(--red);
+  color: #fff;
+  cursor: pointer;
+  border: 1px solid var(--orange);
+}
+.spons-cta-btn:hover {
+  background: var(--orange);
+  color: #fff;
+}
+.spons-copy-btn {
+  width: 100%;
+  padding: 10px 14px;
+  background: transparent;
+  border: 1px solid var(--line);
+  color: #cfc4be;
+  font-family: var(--mono);
+  font-size: 0.64rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  cursor: pointer;
+  border-radius: 2px;
+}
+.spons-copy-btn:hover {
+  border-color: var(--orange);
+  color: #fff;
+}
+
 .dossier {
-  max-width: 460px;
-  margin: 24px auto 0;
-  padding: 26px 26px 30px;
+  width: 100%;
+  margin: 0;
+  padding: 22px 22px 26px;
   border: 1px solid var(--line-soft);
   background:
     linear-gradient(var(--bk), var(--bk)) top left / 16px 1px,
@@ -605,7 +1006,7 @@ figure.hud-frame figcaption { margin-top: 10px; }
     linear-gradient(rgba(116, 10, 3, 0.16), rgba(116, 10, 3, 0.16));
   background-repeat: no-repeat;
 }
-.dossier-tag { display: block; text-align: left; margin-bottom: 18px; }
+.dossier-tag { display: block; text-align: left; margin-bottom: 14px; }
 .dossier-link { display: block; position: relative; text-decoration: none; }
 .dossier-link img {
   width: 100%;
@@ -753,6 +1154,7 @@ footer {
   .collage { grid-template-columns: 1fr; gap: 20px; }
   .collage figure.hud-frame img { height: auto; object-fit: initial; }
   .season-imgs { grid-template-columns: 1fr; gap: 20px; }
+  .spons-grid { grid-template-columns: 1fr; }
 }
 
 @media (max-width: 900px) {
@@ -773,6 +1175,14 @@ footer {
   .stat-div { display: none; }
   .hud-tl, .hud-tr { display: none; }
   .cr-extra { display: none; }
+  .tier-tabs { grid-template-columns: repeat(3, 1fr); }
+  .spons-panel { padding: 20px 16px 24px; }
+  .perk-item { flex-wrap: wrap; }
+  .perk-tier-tag { margin-left: 38px; }
+}
+
+@media (max-width: 480px) {
+  .tier-tabs { grid-template-columns: repeat(2, 1fr); }
 }
 
 @media (max-width: 760px) {
@@ -1109,17 +1519,197 @@ footer {
   <div class="wrap">
     <header class="sec-head center">
       <span class="hud-label">05 / SUPORT</span>
-      <h2>Suport</h2>
+      <h2>Suport &amp; Sponsorizare</h2>
+      <span class="hud-label sub">CONFIGURATOR PACHETE <span class="accent">//</span> CALCULATOR ROI &amp; DEDUCTIBILITATE 20%</span>
     </header>
 
-    <div class="dossier" id="dossier">
-      <span class="hud-label dossier-tag">DOSAR / SPONSORIZARE — PDF</span>
-      <a href="Oferta de sponsorizare ACES.pdf" target="_blank" class="dossier-link">
-        <img src="oferta de sponsorizare.png" alt="Oferta de sponsorizare" loading="lazy" decoding="async">
-        <span class="dossier-btn-wrap">
-          <span class="btn dossier-btn">Deschide Oferta</span>
-        </span>
-      </a>
+    <p class="lead narrow">O colaborare cu echipa Aces aduce vizibilitate directă în comunitatea STEM din Cluj-Napoca și acces la viitoarea generație de ingineri. Parteneriatul se oficializează prin contract de sponsorizare cu asociația de părinți a Liceului Teoretic „Lucian Blaga” — <strong>100% deductibil din impozitul pe profit</strong>.</p>
+
+    <div class="spons-grid">
+      <!-- Left: Interactive Tier Selector, Budget Slider & Perks Matrix -->
+      <div class="spons-panel" id="spons-configurator">
+        <div class="spons-panel-head">
+          <span class="hud-label">SYS.CONFIG <span class="accent">//</span> ALEGE NIVELUL DE IMPLICARE</span>
+          <span class="hud-label" id="perks-counter">7 / 10 BENEFICII DEBLOCATE</span>
+        </div>
+
+        <!-- 5 Official ACES Tiers from PDF -->
+        <div class="tier-tabs" role="tablist" aria-label="Pachete de sponsorizare">
+          <button type="button" class="tier-tab" data-tier="0" data-ron="300" role="tab" aria-selected="false">
+            <span class="t-suit">&#9733;</span>
+            <span class="t-name">Supporter</span>
+            <span class="t-price">300+ RON</span>
+          </button>
+          <button type="button" class="tier-tab" data-tier="1" data-ron="1000" role="tab" aria-selected="false">
+            <span class="t-suit">&hearts;</span>
+            <span class="t-name">Inimă Roșie</span>
+            <span class="t-price">1.000+ RON</span>
+          </button>
+          <button type="button" class="tier-tab active" data-tier="2" data-ron="3500" role="tab" aria-selected="true">
+            <span class="t-suit">&spades;</span>
+            <span class="t-name">Inimă Neagră</span>
+            <span class="t-price">3.500+ RON</span>
+          </button>
+          <button type="button" class="tier-tab" data-tier="3" data-ron="6500" role="tab" aria-selected="false">
+            <span class="t-suit">&clubs;</span>
+            <span class="t-name">Treflă</span>
+            <span class="t-price">6.500+ RON</span>
+          </button>
+          <button type="button" class="tier-tab" data-tier="4" data-ron="10000" role="tab" aria-selected="false">
+            <span class="t-suit">&diams;</span>
+            <span class="t-name">Romb</span>
+            <span class="t-price">10.000+ RON</span>
+          </button>
+        </div>
+
+        <!-- Budget Slider -->
+        <div class="slider-box">
+          <div class="slider-readout">
+            <div class="slider-amount-wrap">
+              <span class="slider-amount-ron" id="slider-ron-display">3.500 RON</span>
+              <span class="slider-amount-eur" id="slider-eur-display">(&approx; 700 EUR)</span>
+            </div>
+            <span class="slider-tier-badge" id="slider-tier-badge">&spades; PACHET INIMĂ NEAGRĂ</span>
+          </div>
+
+          <input
+            type="range"
+            id="budget-slider"
+            class="budget-slider"
+            min="300"
+            max="12000"
+            step="100"
+            value="3500"
+            aria-label="Buget de sponsorizare în RON"
+          >
+
+          <div class="slider-ticks">
+            <button type="button" data-jump="300">300 RON</button>
+            <button type="button" data-jump="1000">1.000 RON</button>
+            <button type="button" data-jump="3500" class="tick-on">3.500 RON</button>
+            <button type="button" data-jump="6500">6.500 RON</button>
+            <button type="button" data-jump="10000">10.000+ RON</button>
+          </div>
+        </div>
+
+        <!-- 10 Official Perks from Oferta de sponsorizare ACES.pdf -->
+        <ul class="perks-list" id="perks-list" aria-label="Beneficii incluse în pachet">
+          <li class="perk-item unlocked" data-min="300">
+            <span class="perk-status" aria-hidden="true">&#10003;</span>
+            <span class="perk-text">Story de mulțumire pe rețelele noastre de socializare (Instagram și Facebook)</span>
+            <span class="perk-tier-tag">300+ RON</span>
+          </li>
+          <li class="perk-item unlocked" data-min="1000">
+            <span class="perk-status" aria-hidden="true">&#10003;</span>
+            <span class="perk-text">Afișarea materialelor promoționale a firmei la evenimentele organizate de noi</span>
+            <span class="perk-tier-tag">&hearts; 1.000+ RON</span>
+          </li>
+          <li class="perk-item unlocked" data-min="1000">
+            <span class="perk-status" aria-hidden="true">&#10003;</span>
+            <span class="perk-text">Postare de mulțumire la finalul sezonului FTC</span>
+            <span class="perk-tier-tag">&hearts; 1.000+ RON</span>
+          </li>
+          <li class="perk-item unlocked" data-min="3500">
+            <span class="perk-status" aria-hidden="true">&#10003;</span>
+            <span class="perk-text">Postare după eveniment pe rețelele noastre de socializare</span>
+            <span class="perk-tier-tag">&spades; 3.500+ RON</span>
+          </li>
+          <li class="perk-item unlocked" data-min="3500">
+            <span class="perk-status" aria-hidden="true">&#10003;</span>
+            <span class="perk-text">Crearea unui sticker custom, logo-ul firmei combinat cu logo-ul Aces</span>
+            <span class="perk-tier-tag">&spades; 3.500+ RON</span>
+          </li>
+          <li class="perk-item unlocked" data-min="3500">
+            <span class="perk-status" aria-hidden="true">&#10003;</span>
+            <span class="perk-text">Menționare în descrierea postării evenimentului</span>
+            <span class="perk-tier-tag">&spades; 3.500+ RON</span>
+          </li>
+          <li class="perk-item unlocked" data-min="3500">
+            <span class="perk-status" aria-hidden="true">&#10003;</span>
+            <span class="perk-text">Afișarea logo-ului firmei pe roll-up</span>
+            <span class="perk-tier-tag">&spades; 3.500+ RON</span>
+          </li>
+          <li class="perk-item locked" data-min="6500">
+            <span class="perk-status" aria-hidden="true">&mdash;</span>
+            <span class="perk-text">Afișarea logo-ului pe robot</span>
+            <span class="perk-tier-tag">&clubs; 6.500+ RON</span>
+          </li>
+          <li class="perk-item locked" data-min="6500">
+            <span class="perk-status" aria-hidden="true">&mdash;</span>
+            <span class="perk-text">Voluntariat în cadrul evenimentelor firmei</span>
+            <span class="perk-tier-tag">&clubs; 6.500+ RON</span>
+          </li>
+          <li class="perk-item locked" data-min="10000">
+            <span class="perk-status" aria-hidden="true">&mdash;</span>
+            <span class="perk-text">Asociere principală cu un eveniment susținut de noi („Powered by ...”)</span>
+            <span class="perk-tier-tag">&diams; 10.000+ RON</span>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Right: 20% Corporate Tax Deduction Calculator + Pre-filled Contact + PDF Dossier -->
+      <div class="spons-side">
+        <div class="spons-panel" id="spons-roi-panel">
+          <div class="spons-panel-head">
+            <span class="hud-label">FISCAL.ROI <span class="accent">//</span> DEDUCTIBILITATE 20%</span>
+            <span class="hud-label">CODUL FISCAL RO</span>
+          </div>
+
+          <div class="tax-box">
+            <span class="tax-badge">FACILITATE FISCALĂ COMPANII ROMÂNIA</span>
+            <div class="tax-title">Sponsorizare 100% deductibilă din impozitul pe profit</div>
+            <p class="tax-desc">În România, companiile plătitoare de impozit pe profit pot direcționa până la <strong>20% din impozitul pe profit datorat</strong> (în limita a 0,75% din cifra de afaceri) către asociația de părinți a liceului nostru, fără niciun cost suplimentar față de taxele datorate statului.</p>
+
+            <div class="tax-calc-rows">
+              <div class="tax-calc-row">
+                <span>Valoare pachet selectat:</span>
+                <strong id="tax-val-ron">3.500 RON (&approx; 700 EUR)</strong>
+              </div>
+              <div class="tax-calc-row">
+                <span>Scădere din impozitul pe profit (până la 20%):</span>
+                <strong id="tax-deduct-ron">-3.500 RON</strong>
+              </div>
+              <div class="tax-calc-row">
+                <span>Impozit pe profit anual minim necesar (plafon 20%):</span>
+                <strong id="tax-min-profit">17.500 RON</strong>
+              </div>
+              <div class="tax-calc-row highlight">
+                <span>Cost net estimat pentru companie:</span>
+                <strong id="tax-net-cost">0 RON (100% deductibil)</strong>
+              </div>
+            </div>
+          </div>
+
+          <div class="spons-form-fields">
+            <div class="spons-input-group">
+              <label for="spons-company">Nume Companie (opțional)</label>
+              <input type="text" id="spons-company" class="spons-input" placeholder="ex. Tech Solutions Cluj SRL">
+            </div>
+            <div class="spons-input-group">
+              <label for="spons-contact-person">Persoană de contact / Telefon (opțional)</label>
+              <input type="text" id="spons-contact-person" class="spons-input" placeholder="ex. Alexandru Pop — 07xx xxx xxx">
+            </div>
+          </div>
+
+          <div class="spons-cta-stack">
+            <a href="mailto:acesrobotics.cj@gmail.com" id="spons-mailto-btn" class="btn spons-cta-btn">
+              Solicită Pachetul &spades; Inimă Neagră (3.500 RON)
+            </a>
+            <button type="button" id="spons-copy-btn" class="spons-copy-btn">
+              [ Copiază sumarul ofertei pentru email ]
+            </button>
+          </div>
+        </div>
+
+        <div class="dossier" id="dossier">
+          <a href="Oferta de sponsorizare ACES.pdf" target="_blank" class="dossier-link">
+            <img src="oferta de sponsorizare.png" alt="Oferta de sponsorizare" loading="lazy" decoding="async">
+            <span class="dossier-btn-wrap">
+              <span class="btn dossier-btn">Deschide Oferta PDF</span>
+            </span>
+          </a>
+        </div>
+      </div>
     </div>
   </div>
 </section>
@@ -1207,6 +1797,201 @@ function onScroll() {
 window.addEventListener('scroll', onScroll, { passive: true });
 onScroll();
 
+/* ─── SPONSORSHIP TIER CONFIGURATOR & ROI CALCULATOR ─── */
+(function () {
+  var slider = document.getElementById('budget-slider');
+  if (!slider) return;
+
+  var TIERS = [
+    { id: 0, min: 300,   suit: '★', name: 'Supporter',    badge: '★ PACHET SUPPORTER',    unlockMsg: 'Story de mulțumire pe Instagram & Facebook' },
+    { id: 1, min: 1000,  suit: '♥', name: 'Inimă Roșie',  badge: '♥ PACHET INIMĂ ROȘIE',  unlockMsg: 'materiale promoționale la evenimente & postare final sezon' },
+    { id: 2, min: 3500,  suit: '♠', name: 'Inimă Neagră', badge: '♠ PACHET INIMĂ NEAGRĂ', unlockMsg: 'logo pe roll-up, sticker custom & mențiuni evenimente' },
+    { id: 3, min: 6500,  suit: '♣', name: 'Treflă',       badge: '♣ PACHET TREFLĂ',       unlockMsg: 'logo pe robot & voluntariat în cadrul evenimentelor firmei' },
+    { id: 4, min: 10000, suit: '♦', name: 'Romb',         badge: '♦ PACHET ROMB',         unlockMsg: 'asociere principală cu un eveniment („Powered by ...”)' }
+  ];
+
+  var EUR_RATE = 5.0; /* approx conversion 1 EUR = 5 RON */
+  var tierTabs = Array.prototype.slice.call(document.querySelectorAll('.tier-tab'));
+  var tickBtns = Array.prototype.slice.call(document.querySelectorAll('.slider-ticks button'));
+  var perkItems = Array.prototype.slice.call(document.querySelectorAll('#perks-list .perk-item'));
+
+  var ronDisplay = document.getElementById('slider-ron-display');
+  var eurDisplay = document.getElementById('slider-eur-display');
+  var tierBadge = document.getElementById('slider-tier-badge');
+  var perksCounter = document.getElementById('perks-counter');
+  var taxValRon = document.getElementById('tax-val-ron');
+  var taxDeductRon = document.getElementById('tax-deduct-ron');
+  var taxMinProfit = document.getElementById('tax-min-profit');
+  var mailtoBtn = document.getElementById('spons-mailto-btn');
+  var copyBtn = document.getElementById('spons-copy-btn');
+  var companyInput = document.getElementById('spons-company');
+  var contactInput = document.getElementById('spons-contact-person');
+
+  function fmtNum(n) {
+    return n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+  }
+
+  function getActiveTier(ron) {
+    var active = TIERS[0];
+    for (var i = 0; i < TIERS.length; i++) {
+      if (ron >= TIERS[i].min) active = TIERS[i];
+    }
+    return active;
+  }
+
+  function buildEmailSummary(ron, eur, tier, unlockedPerks) {
+    var company = (companyInput && companyInput.value.trim()) ? companyInput.value.trim() : '[Numele Companiei]';
+    var contact = (contactInput && contactInput.value.trim()) ? contactInput.value.trim() : '[Persoană de contact / Telefon]';
+
+    var lines = [
+      'Salutare echipa Aces Robotics,',
+      '',
+      'Reprezint compania ' + company + ' și dorim să discutăm despre o sponsorizare pentru sezonul curent First Tech Challenge.',
+      '',
+      '--- CONFIGURAȚIE PACHET SELECTAT ---',
+      '• Pachet: ' + tier.suit + ' ' + tier.name,
+      '• Buget estimat: ' + fmtNum(ron) + ' RON (~' + fmtNum(eur) + ' EUR)',
+      '• Persoană de contact: ' + contact,
+      '',
+      'Beneficii deblocate în această configurație (' + unlockedPerks.length + '/10):'
+    ];
+    unlockedPerks.forEach(function (p) {
+      lines.push('  [x] ' + p);
+    });
+    lines.push(
+      '',
+      'Vă rugăm să ne trimiteți draftul contractului de sponsorizare (deductibil 20% din impozitul pe profit prin asociația de părinți a Liceului Teoretic „Lucian Blaga”) și pașii următori.',
+      '',
+      'Mulțumim!'
+    );
+    return {
+      subject: 'Propunere Sponsorizare ACES Robotics — Pachet ' + tier.name + ' (' + fmtNum(ron) + ' RON) — ' + company,
+      body: lines.join('\n')
+    };
+  }
+
+  function updateConfigurator(ron) {
+    ron = Math.max(300, Math.min(12000, Number(ron) || 3500));
+    slider.value = ron;
+
+    var min = Number(slider.min) || 300;
+    var max = Number(slider.max) || 12000;
+    var pct = ((ron - min) / (max - min)) * 100;
+    slider.style.setProperty('--pct', pct.toFixed(1) + '%');
+
+    var eur = Math.round(ron / EUR_RATE);
+    var tier = getActiveTier(ron);
+
+    ronDisplay.textContent = fmtNum(ron) + (ron >= 12000 ? '+ RON' : ' RON');
+    eurDisplay.textContent = '(≈ ' + fmtNum(eur) + ' EUR)';
+    tierBadge.textContent = tier.badge;
+
+    /* Update tier tabs */
+    tierTabs.forEach(function (btn) {
+      var isCurrent = Number(btn.getAttribute('data-tier')) === tier.id;
+      btn.classList.toggle('active', isCurrent);
+      btn.setAttribute('aria-selected', isCurrent ? 'true' : 'false');
+    });
+
+    /* Update slider ticks */
+    tickBtns.forEach(function (b) {
+      var j = Number(b.getAttribute('data-jump'));
+      b.classList.toggle('tick-on', ron >= j);
+    });
+
+    /* Update perks */
+    var unlockedPerks = [];
+    perkItems.forEach(function (item) {
+      var req = Number(item.getAttribute('data-min'));
+      var isUnlocked = ron >= req;
+      item.classList.toggle('unlocked', isUnlocked);
+      item.classList.toggle('locked', !isUnlocked);
+      var statusEl = item.querySelector('.perk-status');
+      if (statusEl) statusEl.innerHTML = isUnlocked ? '&#10003;' : '&mdash;';
+      if (isUnlocked) {
+        var txt = item.querySelector('.perk-text');
+        if (txt) unlockedPerks.push(txt.textContent.trim());
+      }
+    });
+
+    perksCounter.textContent = unlockedPerks.length + ' / ' + perkItems.length + ' BENEFICII DEBLOCATE';
+
+    /* Tax deduction calculator (20% of corporate profit tax) */
+    var minProfitTax = ron * 5; /* ron / 0.20 */
+    taxValRon.textContent = fmtNum(ron) + ' RON (≈ ' + fmtNum(eur) + ' EUR)';
+    taxDeductRon.textContent = '-' + fmtNum(ron) + ' RON';
+    taxMinProfit.textContent = fmtNum(minProfitTax) + ' RON';
+
+    /* Update mailto CTA */
+    var mailData = buildEmailSummary(ron, eur, tier, unlockedPerks);
+    mailtoBtn.textContent = 'Solicită Pachetul ' + tier.suit + ' ' + tier.name + ' (' + fmtNum(ron) + ' RON)';
+    mailtoBtn.href =
+      'mailto:acesrobotics.cj@gmail.com?subject=' +
+      encodeURIComponent(mailData.subject) +
+      '&body=' +
+      encodeURIComponent(mailData.body);
+  }
+
+  slider.addEventListener('input', function () {
+    updateConfigurator(slider.value);
+  });
+
+  tierTabs.forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      updateConfigurator(btn.getAttribute('data-ron'));
+    });
+  });
+
+  tickBtns.forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      updateConfigurator(btn.getAttribute('data-jump'));
+    });
+  });
+
+  perkItems.forEach(function (item) {
+    item.addEventListener('click', function () {
+      var req = Number(item.getAttribute('data-min'));
+      if (Number(slider.value) < req) {
+        updateConfigurator(req);
+      }
+    });
+  });
+
+  if (companyInput) {
+    companyInput.addEventListener('input', function () { updateConfigurator(slider.value); });
+  }
+  if (contactInput) {
+    contactInput.addEventListener('input', function () { updateConfigurator(slider.value); });
+  }
+
+  if (copyBtn) {
+    copyBtn.addEventListener('click', function () {
+      var ron = Number(slider.value) || 3500;
+      var eur = Math.round(ron / EUR_RATE);
+      var tier = getActiveTier(ron);
+      var unlockedPerks = [];
+      perkItems.forEach(function (item) {
+        if (item.classList.contains('unlocked')) {
+          var txt = item.querySelector('.perk-text');
+          if (txt) unlockedPerks.push(txt.textContent.trim());
+        }
+      });
+      var mailData = buildEmailSummary(ron, eur, tier, unlockedPerks);
+      var fullText = 'Subiect: ' + mailData.subject + '\nCătre: acesrobotics.cj@gmail.com\n\n' + mailData.body;
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(fullText).then(function () {
+          copyBtn.textContent = '[ SUMAR COPIAT ÎN CLIPBOARD ✓ ]';
+          setTimeout(function () {
+            copyBtn.textContent = '[ Copiază sumarul ofertei pentru email ]';
+          }, 2600);
+        });
+      }
+    });
+  }
+
+  updateConfigurator(slider.value);
+})();
+
 /* ─── LIGHTBOX — HUD frame, prev/next, keyboard nav, alt caption ─── */
 var lightbox = document.getElementById('lightbox-modal');
 var lightboxImg = document.getElementById('lightbox-img');
@@ -1285,6 +2070,7 @@ queueReveal('.collage > figure',   { step: 110 });
 queueReveal('.team-grid > figure', { step: 110 });
 queueReveal('.season-panel',       {});
 queueReveal('.event-card',         { step: 120 });
+queueReveal('.spons-panel',        { step: 110 });
 queueReveal('.dossier',            {});
 queueReveal('.contact-row',        { step: 90 });
 
