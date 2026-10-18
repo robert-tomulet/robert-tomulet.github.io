@@ -858,7 +858,8 @@ figure.hud-frame figcaption { margin-top: 10px; }
   background: rgba(230, 80, 27, 0.08);
 }
 
-/* Right column: Tax Deduction & Contact Action + Dossier */
+/* Left & Right columns: independent vertical stacks on desktop */
+.spons-main,
 .spons-side {
   display: flex;
   flex-direction: column;
@@ -991,7 +992,8 @@ figure.hud-frame figcaption { margin-top: 10px; }
 
 .dossier {
   width: 100%;
-  margin: 0;
+  max-width: 420px;
+  margin: 0 auto;
   padding: 22px 22px 26px;
   border: 1px solid var(--line-soft);
   background:
@@ -1010,7 +1012,9 @@ figure.hud-frame figcaption { margin-top: 10px; }
 .dossier-link { display: block; position: relative; text-decoration: none; }
 .dossier-link img {
   width: 100%;
-  height: auto;
+  height: 235px;
+  object-fit: cover;
+  object-position: center 75%;
   display: block;
   border: 1px solid rgba(195, 17, 12, 0.25);
 }
@@ -1154,7 +1158,20 @@ footer {
   .collage { grid-template-columns: 1fr; gap: 20px; }
   .collage figure.hud-frame img { height: auto; object-fit: initial; }
   .season-imgs { grid-template-columns: 1fr; gap: 20px; }
-  .spons-grid { grid-template-columns: 1fr; }
+  .spons-grid {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 24px;
+  }
+  .spons-main,
+  .spons-side {
+    display: contents;
+  }
+  #spons-configurator { order: 1; }
+  #spons-roi-panel    { order: 2; }
+  #dossier            { order: 3; }
+  #dossier-one-pager  { order: 4; }
 }
 
 @media (max-width: 900px) {
@@ -1526,125 +1543,136 @@ footer {
     <p class="lead narrow">O colaborare cu echipa Aces aduce vizibilitate directă în comunitatea STEM din Cluj-Napoca și acces la viitoarea generație de ingineri. Parteneriatul se oficializează prin contract de sponsorizare cu asociația de părinți a Liceului Teoretic „Lucian Blaga” — <strong>100% deductibil din impozitul pe profit</strong>.</p>
 
     <div class="spons-grid">
-      <!-- Left: Interactive Tier Selector, Budget Slider & Perks Matrix -->
-      <div class="spons-panel" id="spons-configurator">
-        <div class="spons-panel-head">
-          <span class="hud-label">SYS.CONFIG <span class="accent">//</span> ALEGE NIVELUL DE IMPLICARE</span>
-          <span class="hud-label" id="perks-counter">7 / 10 BENEFICII DEBLOCATE</span>
-        </div>
+      <!-- Left: Interactive Tier Selector, Budget Slider, Perks Matrix + One-Pager Dossier (on desktop) -->
+      <div class="spons-main">
+        <div class="spons-panel" id="spons-configurator">
+          <div class="spons-panel-head">
+            <span class="hud-label">SYS.CONFIG <span class="accent">//</span> ALEGE NIVELUL DE IMPLICARE</span>
+            <span class="hud-label" id="perks-counter">7 / 10 BENEFICII DEBLOCATE</span>
+          </div>
 
-        <!-- 5 Official ACES Tiers from PDF -->
-        <div class="tier-tabs" role="tablist" aria-label="Pachete de sponsorizare">
-          <button type="button" class="tier-tab" data-tier="0" data-ron="300" role="tab" aria-selected="false">
-            <span class="t-suit">&#9733;</span>
-            <span class="t-name">Supporter</span>
-            <span class="t-price">300+ RON</span>
-          </button>
-          <button type="button" class="tier-tab" data-tier="1" data-ron="1000" role="tab" aria-selected="false">
-            <span class="t-suit">&hearts;</span>
-            <span class="t-name">Inimă Roșie</span>
-            <span class="t-price">1.000+ RON</span>
-          </button>
-          <button type="button" class="tier-tab active" data-tier="2" data-ron="3500" role="tab" aria-selected="true">
-            <span class="t-suit">&spades;</span>
-            <span class="t-name">Inimă Neagră</span>
-            <span class="t-price">3.500+ RON</span>
-          </button>
-          <button type="button" class="tier-tab" data-tier="3" data-ron="6500" role="tab" aria-selected="false">
-            <span class="t-suit">&clubs;</span>
-            <span class="t-name">Treflă</span>
-            <span class="t-price">6.500+ RON</span>
-          </button>
-          <button type="button" class="tier-tab" data-tier="4" data-ron="10000" role="tab" aria-selected="false">
-            <span class="t-suit">&diams;</span>
-            <span class="t-name">Romb</span>
-            <span class="t-price">10.000+ RON</span>
-          </button>
-        </div>
+          <!-- 5 Official ACES Tiers from PDF -->
+          <div class="tier-tabs" role="tablist" aria-label="Pachete de sponsorizare">
+            <button type="button" class="tier-tab" data-tier="0" data-ron="300" role="tab" aria-selected="false">
+              <span class="t-suit">&#9733;</span>
+              <span class="t-name">Supporter</span>
+              <span class="t-price">300+ RON</span>
+            </button>
+            <button type="button" class="tier-tab" data-tier="1" data-ron="1000" role="tab" aria-selected="false">
+              <span class="t-suit">&hearts;</span>
+              <span class="t-name">Inimă Roșie</span>
+              <span class="t-price">1.000+ RON</span>
+            </button>
+            <button type="button" class="tier-tab active" data-tier="2" data-ron="3500" role="tab" aria-selected="true">
+              <span class="t-suit">&spades;</span>
+              <span class="t-name">Inimă Neagră</span>
+              <span class="t-price">3.500+ RON</span>
+            </button>
+            <button type="button" class="tier-tab" data-tier="3" data-ron="6500" role="tab" aria-selected="false">
+              <span class="t-suit">&clubs;</span>
+              <span class="t-name">Treflă</span>
+              <span class="t-price">6.500+ RON</span>
+            </button>
+            <button type="button" class="tier-tab" data-tier="4" data-ron="10000" role="tab" aria-selected="false">
+              <span class="t-suit">&diams;</span>
+              <span class="t-name">Romb</span>
+              <span class="t-price">10.000+ RON</span>
+            </button>
+          </div>
 
-        <!-- Budget Slider -->
-        <div class="slider-box">
-          <div class="slider-readout">
-            <div class="slider-amount-wrap">
-              <span class="slider-amount-ron" id="slider-ron-display">3.500 RON</span>
-              <span class="slider-amount-eur" id="slider-eur-display">(&approx; 700 EUR)</span>
+          <!-- Budget Slider -->
+          <div class="slider-box">
+            <div class="slider-readout">
+              <div class="slider-amount-wrap">
+                <span class="slider-amount-ron" id="slider-ron-display">3.500 RON</span>
+                <span class="slider-amount-eur" id="slider-eur-display">(&approx; 700 EUR)</span>
+              </div>
+              <span class="slider-tier-badge" id="slider-tier-badge">&spades; PACHET INIMĂ NEAGRĂ</span>
             </div>
-            <span class="slider-tier-badge" id="slider-tier-badge">&spades; PACHET INIMĂ NEAGRĂ</span>
+
+            <input
+              type="range"
+              id="budget-slider"
+              class="budget-slider"
+              min="300"
+              max="12000"
+              step="100"
+              value="3500"
+              aria-label="Buget de sponsorizare în RON"
+            >
+
+            <div class="slider-ticks">
+              <button type="button" data-jump="300">300 RON</button>
+              <button type="button" data-jump="1000">1.000 RON</button>
+              <button type="button" data-jump="3500" class="tick-on">3.500 RON</button>
+              <button type="button" data-jump="6500">6.500 RON</button>
+              <button type="button" data-jump="10000">10.000+ RON</button>
+            </div>
           </div>
 
-          <input
-            type="range"
-            id="budget-slider"
-            class="budget-slider"
-            min="300"
-            max="12000"
-            step="100"
-            value="3500"
-            aria-label="Buget de sponsorizare în RON"
-          >
-
-          <div class="slider-ticks">
-            <button type="button" data-jump="300">300 RON</button>
-            <button type="button" data-jump="1000">1.000 RON</button>
-            <button type="button" data-jump="3500" class="tick-on">3.500 RON</button>
-            <button type="button" data-jump="6500">6.500 RON</button>
-            <button type="button" data-jump="10000">10.000+ RON</button>
-          </div>
+          <!-- 10 Official Perks from Oferta de sponsorizare ACES.pdf -->
+          <ul class="perks-list" id="perks-list" aria-label="Beneficii incluse în pachet">
+            <li class="perk-item unlocked" data-min="300">
+              <span class="perk-status" aria-hidden="true">&#10003;</span>
+              <span class="perk-text">Story de mulțumire pe rețelele noastre de socializare (Instagram și Facebook)</span>
+              <span class="perk-tier-tag">300+ RON</span>
+            </li>
+            <li class="perk-item unlocked" data-min="1000">
+              <span class="perk-status" aria-hidden="true">&#10003;</span>
+              <span class="perk-text">Afișarea materialelor promoționale a firmei la evenimentele organizate de noi</span>
+              <span class="perk-tier-tag">&hearts; 1.000+ RON</span>
+            </li>
+            <li class="perk-item unlocked" data-min="1000">
+              <span class="perk-status" aria-hidden="true">&#10003;</span>
+              <span class="perk-text">Postare de mulțumire la finalul sezonului FTC</span>
+              <span class="perk-tier-tag">&hearts; 1.000+ RON</span>
+            </li>
+            <li class="perk-item unlocked" data-min="3500">
+              <span class="perk-status" aria-hidden="true">&#10003;</span>
+              <span class="perk-text">Postare după eveniment pe rețelele noastre de socializare</span>
+              <span class="perk-tier-tag">&spades; 3.500+ RON</span>
+            </li>
+            <li class="perk-item unlocked" data-min="3500">
+              <span class="perk-status" aria-hidden="true">&#10003;</span>
+              <span class="perk-text">Crearea unui sticker custom, logo-ul firmei combinat cu logo-ul Aces</span>
+              <span class="perk-tier-tag">&spades; 3.500+ RON</span>
+            </li>
+            <li class="perk-item unlocked" data-min="3500">
+              <span class="perk-status" aria-hidden="true">&#10003;</span>
+              <span class="perk-text">Menționare în descrierea postării evenimentului</span>
+              <span class="perk-tier-tag">&spades; 3.500+ RON</span>
+            </li>
+            <li class="perk-item unlocked" data-min="3500">
+              <span class="perk-status" aria-hidden="true">&#10003;</span>
+              <span class="perk-text">Afișarea logo-ului firmei pe roll-up</span>
+              <span class="perk-tier-tag">&spades; 3.500+ RON</span>
+            </li>
+            <li class="perk-item locked" data-min="6500">
+              <span class="perk-status" aria-hidden="true">&mdash;</span>
+              <span class="perk-text">Afișarea logo-ului pe robot</span>
+              <span class="perk-tier-tag">&clubs; 6.500+ RON</span>
+            </li>
+            <li class="perk-item locked" data-min="6500">
+              <span class="perk-status" aria-hidden="true">&mdash;</span>
+              <span class="perk-text">Voluntariat în cadrul evenimentelor firmei</span>
+              <span class="perk-tier-tag">&clubs; 6.500+ RON</span>
+            </li>
+            <li class="perk-item locked" data-min="10000">
+              <span class="perk-status" aria-hidden="true">&mdash;</span>
+              <span class="perk-text">Asociere principală cu un eveniment susținut de noi („Powered by ...”)</span>
+              <span class="perk-tier-tag">&diams; 10.000+ RON</span>
+            </li>
+          </ul>
         </div>
 
-        <!-- 10 Official Perks from Oferta de sponsorizare ACES.pdf -->
-        <ul class="perks-list" id="perks-list" aria-label="Beneficii incluse în pachet">
-          <li class="perk-item unlocked" data-min="300">
-            <span class="perk-status" aria-hidden="true">&#10003;</span>
-            <span class="perk-text">Story de mulțumire pe rețelele noastre de socializare (Instagram și Facebook)</span>
-            <span class="perk-tier-tag">300+ RON</span>
-          </li>
-          <li class="perk-item unlocked" data-min="1000">
-            <span class="perk-status" aria-hidden="true">&#10003;</span>
-            <span class="perk-text">Afișarea materialelor promoționale a firmei la evenimentele organizate de noi</span>
-            <span class="perk-tier-tag">&hearts; 1.000+ RON</span>
-          </li>
-          <li class="perk-item unlocked" data-min="1000">
-            <span class="perk-status" aria-hidden="true">&#10003;</span>
-            <span class="perk-text">Postare de mulțumire la finalul sezonului FTC</span>
-            <span class="perk-tier-tag">&hearts; 1.000+ RON</span>
-          </li>
-          <li class="perk-item unlocked" data-min="3500">
-            <span class="perk-status" aria-hidden="true">&#10003;</span>
-            <span class="perk-text">Postare după eveniment pe rețelele noastre de socializare</span>
-            <span class="perk-tier-tag">&spades; 3.500+ RON</span>
-          </li>
-          <li class="perk-item unlocked" data-min="3500">
-            <span class="perk-status" aria-hidden="true">&#10003;</span>
-            <span class="perk-text">Crearea unui sticker custom, logo-ul firmei combinat cu logo-ul Aces</span>
-            <span class="perk-tier-tag">&spades; 3.500+ RON</span>
-          </li>
-          <li class="perk-item unlocked" data-min="3500">
-            <span class="perk-status" aria-hidden="true">&#10003;</span>
-            <span class="perk-text">Menționare în descrierea postării evenimentului</span>
-            <span class="perk-tier-tag">&spades; 3.500+ RON</span>
-          </li>
-          <li class="perk-item unlocked" data-min="3500">
-            <span class="perk-status" aria-hidden="true">&#10003;</span>
-            <span class="perk-text">Afișarea logo-ului firmei pe roll-up</span>
-            <span class="perk-tier-tag">&spades; 3.500+ RON</span>
-          </li>
-          <li class="perk-item locked" data-min="6500">
-            <span class="perk-status" aria-hidden="true">&mdash;</span>
-            <span class="perk-text">Afișarea logo-ului pe robot</span>
-            <span class="perk-tier-tag">&clubs; 6.500+ RON</span>
-          </li>
-          <li class="perk-item locked" data-min="6500">
-            <span class="perk-status" aria-hidden="true">&mdash;</span>
-            <span class="perk-text">Voluntariat în cadrul evenimentelor firmei</span>
-            <span class="perk-tier-tag">&clubs; 6.500+ RON</span>
-          </li>
-          <li class="perk-item locked" data-min="10000">
-            <span class="perk-status" aria-hidden="true">&mdash;</span>
-            <span class="perk-text">Asociere principală cu un eveniment susținut de noi („Powered by ...”)</span>
-            <span class="perk-tier-tag">&diams; 10.000+ RON</span>
-          </li>
-        </ul>
+        <div class="dossier" id="dossier-one-pager">
+          <a href="/one-pager/index.html" target="_blank" class="dossier-link">
+            <img src="regionala 2027.png" alt="One-Pager Regională Cluj-Napoca 2027" loading="lazy" decoding="async">
+            <span class="dossier-btn-wrap">
+              <span class="btn dossier-btn">Deschide One-Pager PDF</span>
+            </span>
+          </a>
+        </div>
       </div>
 
       <!-- Right: 20% Corporate Tax Deduction Calculator + Pre-filled Contact + PDF Dossier -->
