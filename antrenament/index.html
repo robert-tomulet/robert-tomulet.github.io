@@ -1,0 +1,1568 @@
+<!doctype html>
+<html lang="ro">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#101a30">
+  <title>Quiz din competition manual - Biobuzz</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Archivo+Black&family=IBM+Plex+Mono:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap');
+
+    :root {
+      color-scheme: dark;
+      --bg: #280905;
+      --panel: #35110c;
+      --panel2: #40160f;
+      --panel3: #1f0704;
+      --red: #c3110c;
+      --red-hover: #df2518;
+      --orange: #e6501b;
+      --orange-light: #ff8151;
+      --text: #f1e7e2;
+      --muted: #cbb9b2;
+      --line: rgba(230, 80, 27, 0.38);
+      
+      --correct-bg: #14351c;
+      --correct-border: #2ecc71;
+      --correct-text: #69f0ae;
+
+      --partial-bg: #3c2409;
+      --partial-border: #f39c12;
+      --partial-text: #f9e79f;
+      
+      --wrong-bg: #400f0d;
+      --wrong-border: #e74c3c;
+      --wrong-text: #ff8b80;
+
+      --mono: 'IBM Plex Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+      --display: 'Archivo Black', 'Arial Black', sans-serif;
+      --body: 'Space Grotesk', 'Segoe UI', Arial, sans-serif;
+      
+      font-family: var(--body);
+      color: var(--text);
+      background: var(--bg);
+      font-synthesis: none;
+    }
+
+    * { box-sizing: border-box; }
+    html { min-height: 100%; background: var(--bg); }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      line-height: 1.6;
+      background-color: var(--bg);
+      background-image: 
+        linear-gradient(rgba(195, 17, 12, 0.045) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(195, 17, 12, 0.045) 1px, transparent 1px);
+      background-size: 24px 24px;
+    }
+
+    main {
+      width: min(840px, 100%);
+      margin: auto;
+      padding: 24px 18px 60px;
+    }
+
+    /* High-tech Card Frame */
+    .card {
+      position: relative;
+      background: rgba(40, 9, 5, 0.96);
+      border: 1px solid var(--line);
+      padding: clamp(22px, 5vw, 38px);
+      box-shadow: 0 24px 70px rgba(16, 3, 0, 0.6);
+      margin-bottom: 24px;
+    }
+    .card:before, .card:after {
+      content: '';
+      position: absolute;
+      width: 17px;
+      height: 17px;
+      pointer-events: none;
+    }
+    .card:before {
+      top: -1px;
+      left: -1px;
+      border-top: 2px solid var(--orange);
+      border-left: 2px solid var(--orange);
+    }
+    .card:after {
+      right: -1px;
+      bottom: -1px;
+      border-right: 2px solid var(--orange);
+      border-bottom: 2px solid var(--orange);
+    }
+
+    .eyebrow, .qhead {
+      font-family: var(--mono);
+      font-size: 0.74rem;
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      color: var(--orange-light);
+      font-weight: 600;
+    }
+
+    h1 {
+      font-family: var(--display);
+      font-size: clamp(1.8rem, 6vw, 3rem);
+      line-height: 1.1;
+      margin: 10px 0 16px;
+      letter-spacing: -0.025em;
+      color: #fff;
+    }
+    p {
+      color: #e0d5d0;
+      line-height: 1.65;
+    }
+
+    /* Buttons */
+    button {
+      border: 1px solid var(--orange);
+      border-radius: 0;
+      background: var(--red);
+      color: #fff;
+      font: 600 0.88rem var(--mono);
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      padding: 14px 22px;
+      min-height: 52px;
+      cursor: pointer;
+      transition: background 0.18s ease, transform 0.1s ease, box-shadow 0.18s ease;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      user-select: none;
+    }
+    button:hover:not(:disabled) {
+      background: var(--red-hover);
+      box-shadow: 0 0 16px rgba(230, 80, 27, 0.4);
+    }
+    button:active:not(:disabled) {
+      transform: translateY(1px);
+    }
+    button:focus-visible {
+      outline: 2px solid #fff;
+      outline-offset: 3px;
+    }
+    button:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+      border-color: #79402f;
+      background: #35110c;
+    }
+
+    .btn-secondary {
+      background: #2a0d08;
+      border-color: #79402f;
+      color: #e0d5d0;
+    }
+    .btn-secondary:hover:not(:disabled) {
+      background: #3f150d;
+      border-color: var(--orange);
+      color: #fff;
+    }
+
+    .btn-success {
+      background: #196f3d;
+      border-color: var(--correct-border);
+    }
+    .btn-success:hover:not(:disabled) {
+      background: #229954;
+    }
+
+    .sound-toggle-btn {
+      min-height: 38px;
+      padding: 6px 12px;
+      font-size: 0.78rem;
+      background: #230a06;
+      border: 1px solid #79402f;
+      color: var(--muted);
+    }
+    .sound-toggle-btn:hover {
+      background: #35110c;
+      border-color: var(--orange);
+      color: #fff;
+    }
+
+    /* Form Fields */
+    .field {
+      margin: 22px 0;
+    }
+    .field label {
+      display: block;
+      font-weight: 700;
+      margin-bottom: 8px;
+      color: #fff;
+      font-size: 0.95rem;
+    }
+    .field input {
+      width: 100%;
+      height: 52px;
+      border: 1px solid #a0452f;
+      background: #1c0906;
+      color: #fff;
+      padding: 0 14px;
+      font: inherit;
+      font-size: 1rem;
+      border-radius: 0;
+      transition: border-color 0.2s;
+    }
+    .field input::placeholder { color: #b6a19a; }
+    .field input:focus {
+      outline: 2px solid var(--orange);
+      outline-offset: 2px;
+    }
+
+    /* Badges & Tags */
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 10px;
+      font-family: var(--mono);
+      font-size: 0.72rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      font-weight: 600;
+      border: 1px solid var(--line);
+      background: rgba(53, 17, 12, 0.7);
+      color: var(--muted);
+    }
+    .badge-c1 { border-color: #e67e22; color: #f39c12; }
+    .badge-c2 { border-color: #3498db; color: #5dade2; }
+    .badge-c3 { border-color: #e74c3c; color: #ec7063; }
+
+    .subtle { font-size: 0.88rem; color: var(--muted); }
+    .error { color: #ff9b82; margin-top: 10px; font-size: 0.9rem; }
+    .hidden { display: none !important; }
+
+    /* Sticky Quiz Topbar */
+    .topbar {
+      position: sticky;
+      top: 10px;
+      z-index: 100;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: rgba(40, 9, 5, 0.95);
+      border: 1px solid #a0452f;
+      padding: 10px 16px;
+      margin-bottom: 12px;
+      font-family: var(--mono);
+      backdrop-filter: blur(10px);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+    }
+    .topbar-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 0.85rem;
+    }
+    .timer {
+      font-variant-numeric: tabular-nums;
+      font-weight: 700;
+      font-size: 1.35rem;
+      color: #fff;
+      letter-spacing: 0.05em;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .timer.urgent {
+      color: #ff5722;
+      animation: pulse 1s infinite alternate;
+    }
+    @keyframes pulse {
+      0% { transform: scale(1); opacity: 1; }
+      100% { transform: scale(1.06); opacity: 0.8; }
+    }
+    .topbar-right {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+    .topbar-score {
+      font-size: 0.9rem;
+      color: var(--orange-light);
+      font-weight: 600;
+    }
+
+    /* Progress bar */
+    .progress-track {
+      width: 100%;
+      height: 6px;
+      background: rgba(28, 9, 6, 0.9);
+      border: 1px solid rgba(160, 69, 47, 0.4);
+      margin-bottom: 20px;
+      overflow: hidden;
+    }
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--red), var(--orange));
+      width: 0%;
+      transition: width 0.3s ease;
+    }
+
+    /* Question Card */
+    .qcard {
+      position: relative;
+      padding: clamp(20px, 4vw, 32px);
+      background: rgba(53, 17, 12, 0.97);
+      border: 1px solid var(--line);
+      margin-bottom: 20px;
+    }
+    .qcard-header {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      padding-bottom: 14px;
+      border-bottom: 1px solid rgba(230, 80, 27, 0.2);
+      margin-bottom: 16px;
+    }
+    .qcard h2 {
+      font-size: clamp(1.15rem, 3.5vw, 1.4rem);
+      line-height: 1.5;
+      margin: 12px 0 18px;
+      color: #fff;
+      font-weight: 600;
+    }
+
+    .qtype-hint {
+      font-size: 0.85rem;
+      color: #ffb194;
+      font-family: var(--mono);
+      margin-bottom: 14px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    /* Choices List */
+    .choices-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+    .choice {
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      padding: 14px 16px;
+      border: 1px solid #79402f;
+      background: #2a0d08;
+      line-height: 1.5;
+      cursor: pointer;
+      min-height: 54px;
+      color: var(--text);
+      transition: all 0.16s ease;
+      position: relative;
+      user-select: none;
+    }
+    .choice:hover:not(.locked) {
+      border-color: var(--orange);
+      background: #37120a;
+    }
+    .choice.selected {
+      border-color: var(--orange-light);
+      background: #4b1a0e;
+    }
+    .choice input {
+      accent-color: var(--orange);
+      width: 20px;
+      height: 20px;
+      flex: none;
+      margin-top: 2px;
+      cursor: pointer;
+    }
+    .choice-text {
+      flex: 1;
+      font-size: 0.98rem;
+    }
+    .choice-letter {
+      font-family: var(--mono);
+      font-weight: 700;
+      color: var(--orange-light);
+      margin-right: 6px;
+    }
+
+    /* Answer Feedback states */
+    .choice.locked {
+      cursor: default;
+    }
+    .choice.is-correct {
+      border-color: var(--correct-border) !important;
+      background: var(--correct-bg) !important;
+      color: #fff;
+    }
+    .choice.is-wrong {
+      border-color: var(--wrong-border) !important;
+      background: var(--wrong-bg) !important;
+      color: #ffcbc7;
+    }
+    .choice.is-missed {
+      border-color: var(--correct-border) !important;
+      background: rgba(46, 204, 113, 0.15) !important;
+      border-style: dashed !important;
+    }
+    .choice-status-pill {
+      margin-left: auto;
+      font-family: var(--mono);
+      font-size: 0.72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      padding: 3px 8px;
+      letter-spacing: 0.05em;
+      flex: none;
+      align-self: center;
+    }
+    .choice-status-pill.pill-correct {
+      background: #196f3d;
+      color: #fff;
+      border: 1px solid var(--correct-border);
+    }
+    .choice-status-pill.pill-wrong {
+      background: #922b21;
+      color: #fff;
+      border: 1px solid var(--wrong-border);
+    }
+    .choice-status-pill.pill-missed {
+      background: rgba(39, 174, 96, 0.3);
+      color: #69f0ae;
+      border: 1px dashed var(--correct-border);
+    }
+
+    /* Feedback Banner */
+    .feedback-banner {
+      padding: 16px 20px;
+      border: 1px solid;
+      margin-top: 20px;
+      animation: fadeIn 0.25s ease;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .feedback-banner.correct {
+      background: var(--correct-bg);
+      border-color: var(--correct-border);
+    }
+    .feedback-banner.partial {
+      background: var(--partial-bg);
+      border-color: var(--partial-border);
+    }
+    .feedback-banner.wrong {
+      background: var(--wrong-bg);
+      border-color: var(--wrong-border);
+    }
+    .feedback-title {
+      font-family: var(--mono);
+      font-size: 1.05rem;
+      font-weight: 700;
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .feedback-banner.correct .feedback-title { color: var(--correct-text); }
+    .feedback-banner.partial .feedback-title { color: var(--partial-text); }
+    .feedback-banner.wrong .feedback-title { color: var(--wrong-text); }
+    
+    .feedback-source {
+      font-family: var(--mono);
+      font-size: 0.84rem;
+      color: #e0d5d0;
+      margin-top: 8px;
+      padding-top: 8px;
+      border-top: 1px solid rgba(255, 255, 255, 0.15);
+    }
+
+    /* Action footer */
+    .foot-actions {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 14px;
+      margin-top: 22px;
+      flex-wrap: wrap;
+    }
+
+    /* Mini Navigator Grid */
+    .nav-drawer {
+      margin-top: 24px;
+      border: 1px solid #79402f;
+      background: rgba(28, 9, 6, 0.85);
+      padding: 16px;
+    }
+    .nav-drawer-summary {
+      font-family: var(--mono);
+      font-size: 0.82rem;
+      color: var(--muted);
+      cursor: pointer;
+      user-select: none;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .grid-nav {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(34px, 1fr));
+      gap: 6px;
+      margin-top: 14px;
+    }
+    .q-dot {
+      height: 34px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--mono);
+      font-size: 0.75rem;
+      font-weight: 600;
+      border: 1px solid #5a281c;
+      background: #240a06;
+      color: #b09a93;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      padding: 0;
+    }
+    .q-dot:hover {
+      border-color: var(--orange);
+      color: #fff;
+    }
+    .q-dot.active {
+      border: 2px solid var(--orange-light);
+      background: #4b1a0e;
+      color: #fff;
+      box-shadow: 0 0 10px rgba(255, 129, 81, 0.5);
+    }
+    .q-dot.dot-correct {
+      background: #14351c;
+      border-color: #27ae60;
+      color: #69f0ae;
+    }
+    .q-dot.dot-partial {
+      background: #462c08;
+      border-color: #f39c12;
+      color: #f9e79f;
+    }
+    .q-dot.dot-wrong {
+      background: #400f0d;
+      border-color: #c0392b;
+      color: #ff8b80;
+    }
+
+    /* Results Screen */
+    .success {
+      text-align: center;
+      padding: clamp(28px, 6vw, 44px) 16px;
+    }
+    .score-circle {
+      font-family: var(--display);
+      font-size: clamp(2.6rem, 9vw, 4.2rem);
+      color: var(--orange-light);
+      line-height: 1;
+      margin: 18px 0 10px;
+      text-shadow: 0 0 24px rgba(230, 80, 27, 0.45);
+    }
+    .score-label {
+      font-family: var(--mono);
+      font-size: 1.1rem;
+      color: #fff;
+      margin-bottom: 24px;
+    }
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 14px;
+      margin: 28px 0;
+      text-align: left;
+    }
+    .stat-box {
+      background: rgba(53, 17, 12, 0.9);
+      border: 1px solid var(--line);
+      padding: 16px;
+    }
+    .stat-box .title {
+      font-family: var(--mono);
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      color: var(--orange-light);
+      letter-spacing: 0.1em;
+      margin-bottom: 6px;
+    }
+    .stat-box .value {
+      font-family: var(--display);
+      font-size: 1.45rem;
+      color: #fff;
+    }
+
+    /* Review questions list */
+    .review-filter-tabs {
+      display: flex;
+      gap: 8px;
+      margin: 24px 0 16px;
+      flex-wrap: wrap;
+    }
+    .tab-btn {
+      min-height: 42px;
+      padding: 8px 16px;
+      font-size: 0.78rem;
+      background: #2a0d08;
+      border: 1px solid #79402f;
+      color: var(--muted);
+    }
+    .tab-btn.active {
+      background: var(--red);
+      border-color: var(--orange);
+      color: #fff;
+    }
+    .review-card {
+      background: rgba(35, 10, 7, 0.92);
+      border: 1px solid rgba(230, 80, 27, 0.25);
+      padding: 18px;
+      margin-bottom: 14px;
+      text-align: left;
+    }
+    .review-card.correct-card { border-left: 4px solid var(--correct-border); }
+    .review-card.partial-card { border-left: 4px solid var(--partial-border); }
+    .review-card.wrong-card { border-left: 4px solid var(--wrong-border); }
+
+    /* Shortcuts hint */
+    .kbd-hint {
+      font-family: var(--mono);
+      font-size: 0.72rem;
+      color: var(--muted);
+      border: 1px solid #6b3425;
+      padding: 2px 6px;
+      background: #1c0906;
+      border-radius: 3px;
+      margin-left: 6px;
+    }
+
+    /* Highlights & Selection */
+    ::selection { background: var(--red); color: #fff; }
+
+    @media (max-width: 600px) {
+      main { padding: 16px 12px 40px; }
+      .topbar { flex-direction: column; gap: 8px; align-items: stretch; }
+      .topbar-left { justify-content: space-between; }
+      .topbar-right { justify-content: space-between; width: 100%; }
+      .foot-actions { flex-direction: column; align-items: stretch; }
+      .foot-actions button { width: 100%; }
+      .qcard { padding: 18px 14px; }
+      .choice { flex-wrap: wrap; }
+      .choice-text { min-width: 0; overflow-wrap: anywhere; }
+      .choice-status-pill { margin-left: 34px; }
+      .feedback-title, .nav-drawer-summary { flex-wrap: wrap; }
+    }
+  </style>
+</head>
+<body>
+<main>
+  <!-- ENTRY SCREEN -->
+  <section id="entry" class="card">
+    <h1>Quiz din competition manual - Biobuzz.</h1>
+
+    <p>Testul conține 60 de întrebări și durează 20 de minute</p>
+
+    <div class="field">
+      <label for="studentName">Nume elev / Membru echipă (opțional)</label>
+      <input id="studentName" placeholder="Ex: Popescu Andrei (Echipa #12345)" autocomplete="name">
+    </div>
+
+    <button id="startBtn" type="button" style="width: 100%;">
+      <span>Începe testul de antrenament (20 minute)</span> ➔
+    </button>
+  </section>
+
+  <!-- QUIZ SCREEN -->
+  <section id="quiz" class="hidden">
+    <!-- Sticky Topbar -->
+    <div class="topbar">
+      <div class="topbar-left">
+        <span class="qhead">ÎNTREBAREA <span id="currentQNum">1</span> / 60</span>
+      </div>
+      <div class="timer" id="timerDisplay">20:00</div>
+      <div class="topbar-right">
+        <div class="topbar-score" id="liveScoreDisplay">Scor: 0 pct</div>
+      </div>
+    </div>
+
+    <!-- Progress bar -->
+    <div class="progress-track" title="Progres test">
+      <div id="progressBar" class="progress-fill"></div>
+    </div>
+
+    <!-- Active Question Card -->
+    <article class="qcard" id="qcard">
+      <h2 id="qText">Se încarcă întrebarea…</h2>
+      <p id="answerTypeHint" class="subtle hidden" aria-live="polite"></p>
+
+      <!-- Choices list -->
+      <div class="choices-list" id="choicesContainer"></div>
+
+      <div id="selectionError" class="error hidden" role="alert">
+        Alege cel puțin o variantă de răspuns înainte de a verifica.
+      </div>
+
+      <!-- Immediate Feedback Banner -->
+      <div id="feedbackBanner" class="feedback-banner hidden">
+        <div class="feedback-title" id="feedbackTitle"></div>
+        <div id="feedbackDetail"></div>
+        <div class="feedback-source" id="feedbackSource"></div>
+      </div>
+
+      <!-- Action buttons -->
+      <div class="foot-actions">
+        <button id="btnCheck" type="button">
+          ✓ Verifică răspunsul <span class="kbd-hint">Enter</span>
+        </button>
+        <button id="btnNext" type="button" class="btn-success hidden">
+          Următoarea întrebare ➔ <span class="kbd-hint">Enter</span>
+        </button>
+        <button id="btnEndEarly" type="button" class="btn-secondary" style="margin-left: auto;">
+          Încheie testul
+        </button>
+      </div>
+    </article>
+
+    <!-- Question Navigator Drawer -->
+    <details class="nav-drawer" open>
+      <summary class="nav-drawer-summary">
+        <span>Grile întrebări (1 - 60) · Navigare rapidă</span>
+        <span id="navAnsweredCount" style="color: var(--orange-light);">0 / 60 răspunse</span>
+      </summary>
+      <div class="grid-nav" id="gridNav"></div>
+    </details>
+  </section>
+
+  <!-- RESULTS / FINISH SCREEN -->
+  <section id="done" class="card success hidden">
+    <div class="eyebrow" id="resultStatus">Antrenament finalizat</div>
+    <h1>Rezultat Antrenament</h1>
+    <p id="resultCandidateName" style="color: #fff; font-weight: 600; font-size: 1.1rem;"></p>
+    
+    <div class="score-circle" id="finalScoreDisplay">0 / 60</div>
+    <div class="score-label" id="finalPercentageDisplay">0% din punctajul maxim</div>
+    <p id="finalFeedbackMessage" style="font-size: 1.05rem; max-width: 600px; margin: 0 auto 20px;"></p>
+
+    <!-- Stats summary -->
+    <div class="stats-grid">
+      <div class="stat-box">
+        <div class="title">Timp utilizat</div>
+        <div class="value" id="finalTimeUsed">--:--</div>
+        <div class="subtle">din 20:00 alocate</div>
+      </div>
+      <div class="stat-box">
+        <div class="title">Categoria 1</div>
+        <div class="value" id="scoreC1">0 / 20</div>
+        <div class="subtle" id="pctC1">0%</div>
+      </div>
+      <div class="stat-box">
+        <div class="title">Categoria 2</div>
+        <div class="value" id="scoreC2">0 / 20</div>
+        <div class="subtle" id="pctC2">0%</div>
+      </div>
+      <div class="stat-box">
+        <div class="title">Categoria 3</div>
+        <div class="value" id="scoreC3">0 / 20</div>
+        <div class="subtle" id="pctC3">0%</div>
+      </div>
+    </div>
+
+    <div style="display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; margin-bottom: 30px;">
+      <button id="btnRestart" type="button">
+        🔄 Generează un nou test (60 întrebări aleatorii)
+      </button>
+      <button id="btnScrollReview" type="button" class="btn-secondary">
+        🔍 Revizuiește răspunsurile
+      </button>
+    </div>
+
+    <!-- Review Section -->
+    <div id="reviewSection" style="margin-top: 36px; border-top: 1px solid var(--line); padding-top: 24px;">
+      <h2 style="font-family: var(--display); font-size: 1.5rem; text-align: left; margin-bottom: 6px;">
+        Revizuire detaliată a întrebărilor
+      </h2>
+      <p class="subtle" style="text-align: left; margin-bottom: 16px;">
+        Verifică răspunsurile date, variantele corecte, punctajul obținut și referințele din manualul oficial BIOBUZZ.
+      </p>
+
+      <div class="review-filter-tabs">
+        <button type="button" class="tab-btn active" data-filter="all" id="tabAll">Toate (60)</button>
+        <button type="button" class="tab-btn" data-filter="full" id="tabFull">Complet corecte (0)</button>
+        <button type="button" class="tab-btn" data-filter="partial" id="tabPartial">Parțiale (0)</button>
+        <button type="button" class="tab-btn" data-filter="zero" id="tabZero">Greșite / 0 pct (0)</button>
+      </div>
+
+      <div id="reviewCardsContainer"></div>
+    </div>
+  </section>
+</main>
+
+<!-- Load the Question Bank -->
+
+<script>
+(() => {
+  'use strict';
+
+  // App State
+  let questions = [];            // 60 questions chosen for this session
+  let currentIndex = 0;          // 0 .. 59
+  let userAnswers = {};          // questionId -> array of selected choice letters ['A', 'C']
+  let checkedState = {};         // questionId -> boolean (whether question was verified)
+  let questionPoints = {};       // questionId -> number (0 <= score <= 1)
+  let timerInterval = null;
+  const quizDurationSeconds = 20 * 60;
+  let quizDeadline = 0;
+  let remainingSeconds = quizDurationSeconds;
+  let timeSpentSeconds = 0;
+  let quizActive = false;
+  let studentName = '';
+
+  const $ = id => document.getElementById(id);
+
+  function formatTime(seconds) {
+    const total = Math.max(0, Math.floor(seconds));
+    return `${String(Math.floor(total / 60)).padStart(2, '0')}:${String(total % 60).padStart(2, '0')}`;
+  }
+
+  // Score formatter
+  function formatScore(num) {
+    if (num === 0 || !num) return '0';
+    if (Number.isInteger(num)) return String(num);
+    const fixed = num.toFixed(2);
+    return fixed.endsWith('.00') ? fixed.slice(0, -3) : fixed.replace(/0$/, '');
+  }
+
+  // Calculate score according to the required formula:
+  // p = 1
+  // gain = correctPicked * (p / t)
+  // penalty = wrongPicked * 0.66 * (p / t)
+  // score = max(0, gain - penalty)
+  function calculateQuestionScore(q, selected) {
+    const t = (q.correct && q.correct.length) ? q.correct.length : 1;
+    const p = 1.0;
+
+    let correctPicked = 0;
+    let wrongPicked = 0;
+
+    selected.forEach(letter => {
+      if (q.correct.includes(letter)) {
+        correctPicked++;
+      } else {
+        wrongPicked++;
+      }
+    });
+
+    const gain = (correctPicked * p) / t;
+    const penalty = wrongPicked * 0.66 * (p / t);
+    const rawScore = gain - penalty;
+    const score = Math.max(0, rawScore);
+
+    return {
+      score,
+      correctPicked,
+      wrongPicked,
+      t,
+      gain,
+      penalty,
+      isFull: correctPicked === t && wrongPicked === 0,
+      isZero: score === 0
+    };
+  }
+
+  // Sound permanently disabled
+  function playFeedbackSound(type) {}
+
+  // Helper: Shuffle array (Fisher-Yates)
+  function shuffle(arr) {
+    const a = arr.slice();
+    for (let i = a.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [a[i], a[j]] = [a[j], a[i]];
+    }
+    return a;
+  }
+
+  function shuffleQuestionChoices(q) {
+    if (!Array.isArray(q.choices) || !Array.isArray(q.correct)) return { ...q };
+    const options = shuffle(q.choices.map((text, index) => ({
+      text,
+      isCorrect: q.correct.includes(String.fromCharCode(65 + index))
+    })));
+    return {
+      ...q,
+      choices: options.map(option => option.text),
+      correct: options.flatMap((option, index) =>
+        option.isCorrect ? [String.fromCharCode(65 + index)] : [])
+    };
+  }
+
+    // Embedded Question Bank (Choice Questions Only - 100% Offline & Standalone)
+  const BIOBUZZ_BANK = {"categories": [{"id": 1, "key": "organizare", "name": "Organizare, Gracious Professionalism, premii și avansare", "description": "Introducere, FIRST Core Values, Competition Integrity Contract, eligibilitate și inspecție, advancement, Event Rules, Awards, structura turneului (secțiunile 1-7, 13-15 din manual).", "manual_sections": ["1", "3", "4", "5", "6", "13", "14", "15"]}, {"id": 2, "key": "joc_si_robot", "name": "Jocul BIOBUZZ și construcția robotului", "description": "ARENA, elemente de joc, setup, punctaj, RP, DRIVE TEAM și regulile de construcție a robotului (secțiunile 8-10.5, 12, plus setup din 11.3).", "manual_sections": ["8", "9", "10", "11.3", "12"]}, {"id": 3, "key": "penalizari", "name": "Penalizări și studii de caz", "description": "MINOR/MAJOR FOUL, YELLOW/RED CARD, DISABLED/DISQUALIFIED, regulile de joc G și aplicarea lor în situații concrete (secțiunile 10.6, 11, 13.2, T401).", "manual_sections": ["10.6", "11", "13.2", "13.4"]}], "questions": [{"id": "C1-002", "category": 1, "topic": "Gracious Professionalism", "difficulty": 2, "type": "single_choice", "question": "Conform manualului, cum ar trebui discutat un comportament considerat „not GP”?", "choices": ["Se cere Head REFEREE să acorde un YELLOW CARD", "Se anunță public că echipa respectivă „nu este” Graciously Professional", "Se raportează automat la FIRST Headquarters", "Se discută comportamentele specifice care trebuie îmbunătățite (de ex. lipsă de respect, nepoliticos, necinstit)"], "correct": ["D"], "source": "1.3.1, E102.B"}, {"id": "C1-003", "category": 1, "topic": "Gracious Professionalism", "difficulty": 1, "type": "single_choice", "question": "Ce descrie conceptul de Coopertition®?", "choices": ["Obligația ca alianțele să împartă egal punctele la finalul meciului", "Bunătate și respect necondiționat față de ceilalți, chiar și într-o competiție acerbă", "Un premiu acordat echipei cu cele mai multe parteneriate", "Regula conform căreia o echipă nu poate juca împotriva aceleiași echipe de două ori"], "correct": ["B"], "source": "1.3.2"}, {"id": "C1-005", "category": 1, "topic": "Core Values", "difficulty": 1, "type": "multiple_choice", "question": "Care dintre următoarele valori fac parte din lista FIRST Core Values?", "choices": ["Inclusion", "Fun", "Excellence", "Teamwork"], "correct": ["A", "B", "D"], "source": "1.3.3"}, {"id": "C1-006", "category": 1, "topic": "Core Values", "difficulty": 2, "type": "single_choice", "question": "Care este descrierea corectă a valorii „Innovation” din FIRST Core Values?", "choices": ["Ne respectăm unii pe alții și ne acceptăm diferențele", "Explorăm noi abilități și idei", "Aplicăm ceea ce învățăm pentru a îmbunătăți lumea", "Folosim creativitatea și perseverența pentru a rezolva probleme"], "correct": ["D"], "source": "1.3.3"}, {"id": "C1-007", "category": 1, "topic": "Framework of Behaviors", "difficulty": 2, "type": "multiple_choice", "question": "Care dintre următoarele fac parte din Framework of Behaviors descris în manual?", "choices": ["Regulamentul intern al școlii fiecărei echipe", "Competition Integrity Contract (CIC)", "FIRST Code of Conduct", "Regulile competiției: Competition Manual, Team Updates și Q&A"], "correct": ["B", "C", "D"], "source": "1.4.2"}, {"id": "C1-010", "category": 1, "topic": "CIC", "difficulty": 1, "type": "multiple_choice", "question": "Care sunt cele două categorii ale Competition Integrity Contract (CIC)?", "choices": ["Inspection Checklist", "Behavior Guidelines", "Sporting Ethics Code", "Escalation Guidelines"], "correct": ["B", "C"], "source": "1.5"}, {"id": "C1-017", "category": 1, "topic": "Utilizarea manualului", "difficulty": 1, "type": "single_choice", "question": "Dacă există o diferență între dimensiunile imperiale și conversiile metrice din manual, care sunt autoritare?", "choices": ["Cea mai mică dintre ele", "Dimensiunile imperiale", "Decide fiecare echipă", "Conversiile metrice"], "correct": ["B"], "source": "1.7.1"}, {"id": "C1-018", "category": 1, "topic": "Utilizarea manualului", "difficulty": 1, "type": "single_choice", "question": "Ce secțiune a manualului este indicată de litera „R” din numerotarea regulilor (de ex. R503)?", "choices": ["Replay Rules", "Rankings", "Referee Rules", "ROBOT Construction Rules"], "correct": ["D"], "source": "1.7.1"}, {"id": "C1-023", "category": 1, "topic": "Q&A", "difficulty": 2, "type": "multiple_choice", "question": "Ce tipuri de întrebări pot să NU primească răspuns în sistemul Q&A?", "choices": ["Cereri de evaluare a legalității designului unui sistem al robotului", "O întrebare generică despre o caracteristică a unei piese, cu referire la regulile relevante", "Întrebări duplicate", "Contestarea deciziilor luate la evenimente trecute"], "correct": ["A", "C", "D"], "source": "1.7.4"}, {"id": "C1-024", "category": 1, "topic": "Q&A", "difficulty": 2, "type": "single_choice", "question": "Cine are autoritatea finală asupra regulilor la un eveniment, chiar dacă există răspunsuri în Q&A?", "choices": ["Moderatorii Q&A", "Lead Coach-ul echipei", "Sponsorul sezonului", "REFEREES și INSPECTORS"], "correct": ["D"], "source": "1.7.4"}, {"id": "C1-026", "category": 1, "topic": "Eligibilitate", "difficulty": 1, "type": "single_choice", "question": "Cel mai târziu cu cât timp înainte de începerea meciurilor de calificare trebuie făcut check-in-ul (dacă nu se specifică altfel)?", "choices": ["45 de minute", "15 minute", "24 de ore", "2 ore"], "correct": ["A"], "source": "I102"}, {"id": "C1-027", "category": 1, "topic": "Eligibilitate", "difficulty": 2, "type": "multiple_choice", "question": "Care dintre următoarele sunt condiții pentru finalizarea check-in-ului (I102)?", "choices": ["Check-in-ul este făcut de un adult al echipei", "Robotul a trecut deja inspecția", "Cel puțin un STUDENT este prezent în locație", "Portofoliul tipărit este obligatoriu"], "correct": ["A", "C"], "source": "I102"}, {"id": "C1-028", "category": 1, "topic": "Eligibilitate", "difficulty": 1, "type": "single_choice", "question": "Câți adulți responsabili de elevi trebuie să fie prezenți pe toată durata evenimentului?", "choices": ["Cel puțin 1, de preferat 2", "Cel puțin 4", "Niciunul, dacă toți elevii au peste 16 ani", "Exact 3"], "correct": ["A"], "source": "I103"}, {"id": "C1-029", "category": 1, "topic": "Eligibilitate", "difficulty": 1, "type": "single_choice", "question": "Ce trebuie să facă o echipă pentru a fi eligibilă la premiile jurizate (Team Judged Awards)?", "choices": ["Să participe la un Initial Interview", "Să joace toate meciurile de calificare", "Să fie în top 8 la finalul calificărilor", "Să treacă inspecția robotului"], "correct": ["A"], "source": "3.2, A203"}, {"id": "C1-030", "category": 1, "topic": "Inspecție", "difficulty": 2, "type": "multiple_choice", "question": "O echipă al cărei robot NU a trecut încă inspecția:", "choices": ["poate juca meciuri de calificare", "poate juca Practice MATCHES programate", "poate participa la jurizare", "poate intra în Filler Line pentru Practice MATCHES neprogramate"], "correct": ["B", "C"], "source": "3.3, 6.1"}, {"id": "C1-031", "category": 1, "topic": "Inspecție", "difficulty": 1, "type": "single_choice", "question": "Cine are autoritatea finală asupra eligibilității unei echipe de a juca meciuri de calificare și playoff, în privința construcției robotului?", "choices": ["Lead ROBOT INSPECTOR (LRI)", "Event Director", "JUDGE Advisor", "Căpitanul alianței"], "correct": ["A"], "source": "3.3.1"}, {"id": "C1-032", "category": 1, "topic": "Inspecție", "difficulty": 2, "type": "multiple_choice", "question": "Pentru care dintre schimbările de mai jos NU este, în general, necesară re-inspecția (dacă nu schimbă semnificativ dimensiunea, legalitatea sau siguranța)?", "choices": ["Înlocuirea unei COMPONENT cu una identică", "Adăugarea unui MECHANISM nou, neinspectat", "Modificarea codului robotului", "Înlocuirea ROBOT SIGN-ului echipei"], "correct": ["A", "C", "D"], "source": "I303"}, {"id": "C1-033", "category": 1, "topic": "Inspecție", "difficulty": 1, "type": "single_choice", "question": "Ce înseamnă că „inspecția nu este exhaustivă”?", "choices": ["Robotul poate fi modificat oricum după inspecție", "Inspecția este opțională la evenimentele mici", "Echipele trebuie să respecte spiritul regulilor de construcție chiar dacă INSPECTORS nu verifică fiecare parte", "Părțile neverificate de INSPECTORS pot încălca regulile"], "correct": ["C"], "source": "3.3.1"}, {"id": "C1-038", "category": 1, "topic": "Advancement", "difficulty": 1, "type": "single_choice", "question": "Câte advancement points primește echipa câștigătoare a Inspire Award, locul 1?", "choices": ["12", "60", "40", "30"], "correct": ["B"], "source": "Table 4-1"}, {"id": "C1-039", "category": 1, "topic": "Advancement", "difficulty": 1, "type": "single_choice", "question": "Câte advancement points primește o echipă pentru Design Award, locul 1?", "choices": ["60", "12", "6", "15"], "correct": ["B"], "source": "Table 4-1"}, {"id": "C1-040", "category": 1, "topic": "Advancement", "difficulty": 1, "type": "single_choice", "question": "Câte advancement points primește fiecare echipă din alianța câștigătoare a playoff-ului (single division)?", "choices": ["60", "40", "10", "20"], "correct": ["B"], "source": "Table 4-1"}, {"id": "C1-041", "category": 1, "topic": "Advancement", "difficulty": 2, "type": "single_choice", "question": "Câte advancement points primește liderul ALLIANCE #2?", "choices": ["18", "2", "19", "20"], "correct": ["C"], "source": "Table 4-1"}, {"id": "C1-042", "category": 1, "topic": "Advancement", "difficulty": 2, "type": "single_choice", "question": "Câte advancement points primește echipa care acceptă a 4-a poziție din draft (Draft Order Acceptance 4)?", "choices": ["17", "4", "18", "16"], "correct": ["A"], "source": "Table 4-1"}, {"id": "C1-043", "category": 1, "topic": "Advancement", "difficulty": 2, "type": "single_choice", "question": "Între ce valori se încadrează punctele pentru Qualification Phase Performance?", "choices": ["Minimum 2, maximum 16", "Minimum 1, maximum 10", "Minimum 5, maximum 40", "Minimum 0, maximum 20"], "correct": ["A"], "source": "Table 4-1"}, {"id": "C1-044", "category": 1, "topic": "Advancement", "difficulty": 3, "type": "single_choice", "question": "Care este al doilea criteriu de departajare (după totalul advancement points) în clasamentul de avansare?", "choices": ["Judged Team Award Points", "Selecție aleatorie", "Average Qualification AUTO Points", "Playoff Advancement Points"], "correct": ["A"], "source": "Table 4-2"}, {"id": "C1-045", "category": 1, "topic": "Advancement", "difficulty": 2, "type": "multiple_choice", "question": "Pentru care dintre următoarele se pot obține advancement points la un eveniment (dacă premiul este acordat acolo)?", "choices": ["Think Award, locul 1", "Connect Award, locul 2", "Digital Animation Award", "FIRST Leadership Award"], "correct": ["A", "B"], "source": "4.1.4, 6.6"}, {"id": "C1-047", "category": 1, "topic": "Event Rules", "difficulty": 1, "type": "single_choice", "question": "Ce sancțiune primește, în general, o echipă pentru încălcarea unei reguli de eveniment (Event Rules – E)?", "choices": ["RED CARD", "MAJOR FOUL", "Descalificare automată", "VERBAL WARNING"], "correct": ["D"], "source": "5 – Universal Violation Note"}, {"id": "C1-049", "category": 1, "topic": "Event Rules", "difficulty": 1, "type": "multiple_choice", "question": "Care dintre următoarele sunt practici de siguranță obligatorii la eveniment (E101)?", "choices": ["Părul lung prins atunci când lucrezi la robot sau lângă el", "Alergatul prin locație pentru a economisi timp", "Încălțăminte închisă", "Ochelari de protecție în zonele specificate"], "correct": ["A", "C", "D"], "source": "E101"}, {"id": "C1-050", "category": 1, "topic": "Event Rules", "difficulty": 2, "type": "multiple_choice", "question": "Care dintre următoarele sunt exemple de comportament nepotrivit conform E102?", "choices": ["A țipa la o persoană din furie sau frustrare", "A insista fără informații noi după ce o decizie a fost luată", "A ține MOMENTAN un semn al echipei pentru a o susține", "A acuza o altă echipă că „nu este GP”"], "correct": ["A", "B", "D"], "source": "E102"}, {"id": "C1-052", "category": 1, "topic": "Event Rules", "difficulty": 1, "type": "multiple_choice", "question": "Care dintre următoarele obiecte NU sunt permise la evenimente?", "choices": ["Butelii cu gaz (de ex. heliu)", "Goarne cu aer (air horns)", "Drone", "Un scuter folosit ca adaptare pentru o dizabilitate"], "correct": ["A", "B", "C"], "source": "E108"}, {"id": "C1-057", "category": 1, "topic": "Event Rules", "difficulty": 2, "type": "single_choice", "question": "Un membru al echipei vrea să filmeze discuția cu un voluntar pentru a „demonstra” o greșeală. Ce prevede manualul?", "choices": ["Are voie doar dacă înregistrează audio, nu video", "Nu are voie să înregistreze interacțiunea fără consimțământul persoanei", "Are voie, pentru că evenimentele sunt transmise live", "Are voie dacă anunță Head REFEREE după aceea"], "correct": ["B"], "source": "E116"}, {"id": "C1-058", "category": 1, "topic": "Event Rules", "difficulty": 2, "type": "multiple_choice", "question": "Care afirmații despre regula E117 (un singur robot) sunt corecte?", "choices": ["Echipa poate inspecta doi roboți și îi poate schimba între meciuri", "O echipă poate participa la un singur eveniment în același timp", "Echipa își poate modifica robotul de-a lungul sezonului", "Echipa poate aduce alți roboți pentru expoziție în pit sau prezentări"], "correct": ["B", "C", "D"], "source": "E117"}, {"id": "C1-063", "category": 1, "topic": "Pit", "difficulty": 1, "type": "single_choice", "question": "Cu ce unelte este permisă lipirea (soldering) în pit?", "choices": ["Cu lampa cu gaz", "Lipirea este complet interzisă", "Cu orice sursă de căldură", "Doar cu ciocan/pistol de lipit electric"], "correct": ["D"], "source": "E507"}, {"id": "C1-064", "category": 1, "topic": "Pit", "difficulty": 2, "type": "multiple_choice", "question": "Care dintre următoarele încalcă regula E510 (încălzirea/răcirea componentelor pentru avantaj)?", "choices": ["Încălzirea tubului termocontractabil la montaj", "Răcirea siguranțelor ca să declanșeze mai târziu", "Folosirea unei baterii ușor calde după încărcarea normală", "Încălzirea bateriilor pentru a le crește performanța"], "correct": ["B", "D"], "source": "E510"}, {"id": "C1-065", "category": 1, "topic": "Pit", "difficulty": 2, "type": "multiple_choice", "question": "Care afirmații despre încărcarea bateriilor (E511) sunt corecte?", "choices": ["Se respectă recomandările producătorului", "Încărcătorul nu trebuie să depășească un curent mediu de 3 A pe canal", "Se folosesc conectori polarizați, corespunzători conectorului bateriei", "Bateriile pot fi încărcate cu clești crocodil dacă se supraveghează"], "correct": ["A", "B", "C"], "source": "E511"}, {"id": "C1-068", "category": 1, "topic": "Premii", "difficulty": 1, "type": "single_choice", "question": "Care este cel mai prestigios premiu jurizat din FIRST Tech Challenge?", "choices": ["Think Award", "Winning Alliance Award", "Inspire Award", "Judges’ Choice Award"], "correct": ["C"], "source": "6.1"}, {"id": "C1-069", "category": 1, "topic": "Premii", "difficulty": 1, "type": "multiple_choice", "question": "În ce categorii sunt împărțite premiile jurizate (pe lângă Judges’ Choice)?", "choices": ["Documentation (Think)", "Machine, Creativity, and Innovation (MCI)", "Team Attributes (TA)", "Driver Skills"], "correct": ["A", "B", "C"], "source": "6.1"}, {"id": "C1-070", "category": 1, "topic": "Premii", "difficulty": 2, "type": "single_choice", "question": "Cine decide câștigătorii premiilor jurizate?", "choices": ["Event Director", "JUDGE Advisor, singur", "Head REFEREE", "JUDGES, ca grup, cu îndrumarea JUDGE Advisor"], "correct": ["D"], "source": "6"}, {"id": "C1-071", "category": 1, "topic": "Premii", "difficulty": 2, "type": "multiple_choice", "question": "Ce informații NU pot fi luate în considerare de JUDGES?", "choices": ["Informații de pe rețelele sociale ale echipei", "Penalizările primite de robot în meciuri", "Conținutul portofoliului", "Performanța echipei din sezoanele trecute"], "correct": ["A", "B", "D"], "source": "6.1.1"}, {"id": "C1-072", "category": 1, "topic": "Premii", "difficulty": 2, "type": "single_choice", "question": "De la ce dată începe „sezonul curent” în scopul jurizării (pentru BIOBUZZ)?", "choices": ["1 septembrie 2026", "Ziua Kickoff", "1 ianuarie 2026", "1 ianuarie 2027"], "correct": ["C"], "source": "6.1.1, A201.E"}, {"id": "C1-073", "category": 1, "topic": "Premii", "difficulty": 1, "type": "single_choice", "question": "Care este durata minimă a unui Initial Interview?", "choices": ["10 minute", "5 minute", "15 minute", "20 de minute"], "correct": ["A"], "source": "A205"}, {"id": "C1-074", "category": 1, "topic": "Premii", "difficulty": 1, "type": "single_choice", "question": "Cât timp are echipa la începutul Initial Interview pentru prezentarea neîntreruptă?", "choices": ["Primele 2 minute", "Tot interviul", "Aproximativ primele 5 minute", "Primele 10 minute"], "correct": ["C"], "source": "A207"}, {"id": "C1-075", "category": 1, "topic": "Premii", "difficulty": 2, "type": "single_choice", "question": "Ce întrebări selectează JUDGE Advisor din Judge Interview Question Bank pentru toate echipele?", "choices": ["O singură întrebare despre robot", "Două întrebări: una pe categoria MCI și una pe categoria TA", "Cinci întrebări aleatorii", "Nicio întrebare comună – fiecare juriu alege liber"], "correct": ["B"], "source": "6.1.2"}, {"id": "C1-076", "category": 1, "topic": "Portofoliu", "difficulty": 2, "type": "multiple_choice", "question": "Care sunt cerințele pentru PORTFOLIO (A201)?", "choices": ["Doar format US Letter sau A4", "O pagină de copertă care include numărul echipei", "Minimum 20 de pagini de conținut", "Maximum 15 pagini de conținut"], "correct": ["A", "B", "D"], "source": "A201"}, {"id": "C1-079", "category": 1, "topic": "Portofoliu", "difficulty": 2, "type": "multiple_choice", "question": "Care afirmații despre PORTFOLIO sunt corecte?", "choices": ["JUDGES nu vor deschide link-uri sau videoclipuri din portofoliu", "Paginile peste limita de 15 nu vor fi citite", "Se pot folosi instrumente AI, cu menționarea lor într-o notă de subsol", "Conținutul paginii de copertă este folosit pentru evaluarea criteriilor"], "correct": ["A", "B", "C"], "source": "A201"}, {"id": "C1-080", "category": 1, "topic": "Premii", "difficulty": 1, "type": "single_choice", "question": "Câți STUDENT reprezentanți ar trebui să aibă, minim, la Initial Interview o echipă cu 2 sau mai mulți elevi?", "choices": ["1", "Toți membrii echipei", "2", "3"], "correct": ["C"], "source": "A204"}, {"id": "C1-081", "category": 1, "topic": "Premii", "difficulty": 2, "type": "single_choice", "question": "Ce rol are adultul „silent observer” la Initial Interview?", "choices": ["Poate cere timp suplimentar", "Poate asista, dar nu poate interacționa sau antrena activ elevii", "Poate prezenta portofoliul", "Poate răspunde la întrebările tehnice"], "correct": ["B"], "source": "A208"}, {"id": "C1-082", "category": 1, "topic": "Premii", "difficulty": 3, "type": "single_choice", "question": "Cât timp suplimentar de interviu poate solicita în avans o echipă care folosește traducător?", "choices": ["Exact 10 minute", "Nu se acordă timp suplimentar", "Dublul timpului standard", "Între 2 și 5 minute"], "correct": ["D"], "source": "A209"}, {"id": "C1-086", "category": 1, "topic": "Premii", "difficulty": 2, "type": "single_choice", "question": "Câte premii jurizate (team judged awards) poate câștiga o echipă la un eveniment?", "choices": ["Maximum două", "Unul singur (inclusiv ca runner-up), dar poate primi și premii de alianță sau individuale", "Unul, iar atunci nu mai poate primi Winning Alliance Award", "Oricâte"], "correct": ["B"], "source": "A215"}, {"id": "C1-087", "category": 1, "topic": "Premii", "difficulty": 2, "type": "multiple_choice", "question": "Pentru care dintre premiile de mai jos este obligatoriu un PORTFOLIO?", "choices": ["Inspire Award", "Control Award", "Reach Award", "Design Award"], "correct": ["A", "B"], "source": "6.3"}, {"id": "C1-088", "category": 1, "topic": "Premii", "difficulty": 1, "type": "single_choice", "question": "Care premiu recunoaște folosirea senzorilor și a software-ului pentru a rezolva provocările jocului?", "choices": ["Design Award", "Think Award", "Control Award", "Connect Award"], "correct": ["C"], "source": "6.3.7"}, {"id": "C1-089", "category": 1, "topic": "Premii", "difficulty": 2, "type": "single_choice", "question": "Pentru Design Award, ce trebuie luat în considerare?", "choices": ["Designul întregului robot sau procesul detaliat de creare", "Doar punctajul obținut în meciuri", "Doar mecanismul cel mai inovator", "Doar aspectul estetic"], "correct": ["A"], "source": "6.3.8"}, {"id": "C1-090", "category": 1, "topic": "Premii", "difficulty": 1, "type": "single_choice", "question": "Care premiu recunoaște recrutarea de noi echipe, mentori sau voluntari în comunitatea FIRST?", "choices": ["Connect Award", "Reach Award", "Sustain Award", "Innovate Award"], "correct": ["B"], "source": "6.3.4"}, {"id": "C1-091", "category": 1, "topic": "Premii", "difficulty": 1, "type": "single_choice", "question": "Care premiu recunoaște parteneriatele cu profesioniști din STEM și planul de dezvoltare a abilităților membrilor?", "choices": ["Reach Award", "Connect Award", "Compass Award", "Think Award"], "correct": ["B"], "source": "6.3.3"}, {"id": "C1-092", "category": 1, "topic": "Premii", "difficulty": 2, "type": "single_choice", "question": "Care premiu recunoaște planurile pentru sustenabilitate financiară, planificarea sezonului și continuitatea echipei?", "choices": ["Connect Award", "Sustain Award", "Inspire Award", "Design Award"], "correct": ["B"], "source": "6.3.5"}, {"id": "C1-094", "category": 1, "topic": "Premii", "difficulty": 2, "type": "single_choice", "question": "Ce se întâmplă cu feedback form-ul completat de JUDGES după Initial Interview?", "choices": ["Este oferit echipei, dar nu este folosit în deliberări", "Este trimis la FIRST HQ pentru advancement", "Este folosit ca bază principală pentru deliberări", "Este publicat pe FTC-Events"], "correct": ["A"], "source": "A212"}, {"id": "C1-095", "category": 1, "topic": "Turneu", "difficulty": 1, "type": "single_choice", "question": "Câte meciuri de calificare se programează pentru fiecare echipă la evenimentele obișnuite?", "choices": ["5 sau 6", "3 sau 4", "10", "8"], "correct": ["A"], "source": "13.6.1"}, {"id": "C1-097", "category": 1, "topic": "Turneu", "difficulty": 2, "type": "multiple_choice", "question": "Care afirmații despre SURROGATE sunt corecte?", "choices": ["Este marcat cu * în program", "YELLOW și RED CARDS primite ca SURROGATE se transmit meciurilor următoare", "Rezultatul meciului SURROGATE contează în RANKING SCORE", "Meciul SURROGATE este întotdeauna al treilea meci de calificare al echipei"], "correct": ["A", "B", "D"], "source": "13.6.2"}, {"id": "C1-098", "category": 1, "topic": "Turneu", "difficulty": 1, "type": "single_choice", "question": "Ce este RANKING SCORE (RS)?", "choices": ["Numărul de TIPS", "Numărul de victorii", "Suma tuturor punctelor din meciuri", "Media RANKING POINTS obținute în meciurile de calificare (fără meciul SURROGATE)"], "correct": ["D"], "source": "13.6.3"}, {"id": "C1-099", "category": 1, "topic": "Turneu", "difficulty": 2, "type": "single_choice", "question": "Care este al doilea criteriu de clasare după RANKING SCORE în calificări?", "choices": ["Media numărului de TIPS", "Sortare aleatorie", "Media punctelor din AUTO", "Media punctelor ALLIANCE din meci, fără MINOR și MAJOR FOULS"], "correct": ["D"], "source": "Table 13-1"}, {"id": "C1-101", "category": 1, "topic": "Turneu", "difficulty": 2, "type": "single_choice", "question": "Ce format are playoff-ul?", "choices": ["Eliminare simplă", "Cel mai bun din 3 meciuri în fiecare rundă", "Sistem round-robin", "Dublă eliminare (upper și lower bracket)"], "correct": ["D"], "source": "13.7"}, {"id": "C1-102", "category": 1, "topic": "Turneu", "difficulty": 2, "type": "single_choice", "question": "Câți reprezentanți STUDENT trebuie să trimită fiecare echipă la ALLIANCE selection?", "choices": ["Minimum 1, maximum 2", "Exact 3", "Toată DRIVE TEAM", "Unul singur, obligatoriu adult"], "correct": ["A"], "source": "T701"}, {"id": "C1-103", "category": 1, "topic": "Turneu", "difficulty": 2, "type": "multiple_choice", "question": "Care afirmații despre ALLIANCE selection sunt corecte?", "choices": ["Un ALLIANCE CAPTAIN nu poate invita o echipă care a refuzat invitația altei alianțe", "O alianță poate cere o echipă de rezervă (backup) în playoff", "Un ALLIANCE lead care refuză o invitație poate în continuare să invite alte echipe", "Dacă un lider de alianță acceptă invitația altui lider, liderii de mai jos urcă un loc"], "correct": ["A", "C", "D"], "source": "T702, T703, 13.7.1"}, {"id": "C1-105", "category": 1, "topic": "Turneu", "difficulty": 3, "type": "single_choice", "question": "Ce se întâmplă dacă, din cauza refuzurilor, o alianță de playoff rămâne cu o singură echipă?", "choices": ["Joacă meciul 1 contra 2", "Primește o echipă desemnată de Head REFEREE", "Este eliminată automat", "Meciul se amână"], "correct": ["A"], "source": "13.7.1"}, {"id": "C1-107", "category": 1, "topic": "Turneu", "difficulty": 2, "type": "single_choice", "question": "Care este pauza minimă dintre două meciuri consecutive ale aceleiași echipe în calificări?", "choices": ["8 minute", "3 minute", "15 minute", "5 minute de la afișarea rezultatelor"], "correct": ["D"], "source": "T406"}, {"id": "C1-110", "category": 1, "topic": "Question Box", "difficulty": 2, "type": "single_choice", "question": "Cu câte persoane se poate adresa o echipă Head REFEREE-ului?", "choices": ["Maximum 3 adulți", "Doar DRIVE COACH-ul", "Maximum 2, dintre care cel puțin una este STUDENT", "Toată DRIVE TEAM"], "correct": ["C"], "source": "T301"}, {"id": "C1-111", "category": 1, "topic": "Question Box", "difficulty": 2, "type": "single_choice", "question": "Până când pot fi puse întrebări despre un meci de calificare la Question Box?", "choices": ["Doar în primele 30 de secunde după meci", "Până la începerea finalei", "Până la finalul evenimentului", "Oricând înainte de începerea ALLIANCE selection"], "correct": ["D"], "source": "T302"}, {"id": "C1-113", "category": 1, "topic": "League", "difficulty": 2, "type": "multiple_choice", "question": "Care afirmații despre League play sunt corecte?", "choices": ["Toate echipele ar trebui să joace minimum 10 meciuri la League Meets", "La League Meets nu se acordă premii", "Clasamentul League Tournament include cele mai bune 10 meciuri de la League Meets", "La League Meets se joacă playoff"], "correct": ["A", "B", "C"], "source": "14"}, {"id": "C1-117", "category": 1, "topic": "Voluntari", "difficulty": 2, "type": "single_choice", "question": "Care rol de voluntar se ocupă de aspectele tehnice ale FIELD-ului și roboților și acționează ca avocat al echipelor?", "choices": ["JUDGE Advisor", "FIELD Supervisor", "FIRST Technical Advisor (FTA)", "Lead Queuer"], "correct": ["C"], "source": "9.10"}, {"id": "C2-002", "category": 2, "topic": "Joc – prezentare", "difficulty": 1, "type": "single_choice", "question": "Care este structura de timp a unui MATCH BIOBUZZ?", "choices": ["15 s AUTO, 5 s tranziție, 2 min TELEOP", "30 s AUTO, 8 s tranziție, 2 min TELEOP", "30 s AUTO, fără tranziție, 2 min 30 s TELEOP", "1 min AUTO, 8 s tranziție, 1 min 30 s TELEOP"], "correct": ["B"], "source": "10.1, 10.4"}, {"id": "C2-003", "category": 2, "topic": "ARENA", "difficulty": 1, "type": "single_choice", "question": "Ce dimensiuni are FIELD-ul BIOBUZZ și din câte TILES este format?", "choices": ["~120 in × 120 in, 36 TILES", "~144 in × 144 in, 25 TILES", "~144 in × 144 in, 36 TILES", "~144 in × 96 in, 24 TILES"], "correct": ["C"], "source": "9.2"}, {"id": "C2-004", "category": 2, "topic": "ARENA", "difficulty": 1, "type": "multiple_choice", "question": "Ce elemente de FIELD se află pe terenul BIOBUZZ?", "choices": ["2 HIVE Structures separate", "4 FLOWERS", "8 FLOWERS", "1 HIVE Structure cu 2 HIVES"], "correct": ["B", "D"], "source": "9.2"}, {"id": "C2-009", "category": 2, "topic": "ARENA", "difficulty": 2, "type": "single_choice", "question": "Unde se află GARDEN-urile pe FIELD?", "choices": ["În ALLIANCE AREA", "Lângă fiecare FLOWER", "În colțuri opuse ale FIELD-ului", "În centrul FIELD-ului, sub HIVE"], "correct": ["C"], "source": "9.3"}, {"id": "C2-010", "category": 2, "topic": "HIVE", "difficulty": 1, "type": "single_choice", "question": "Câte CELLS are fiecare HIVE?", "choices": ["3", "4", "2", "1"], "correct": ["C"], "source": "9.6"}, {"id": "C2-011", "category": 2, "topic": "HIVE", "difficulty": 2, "type": "multiple_choice", "question": "Care afirmații despre HIVE sunt corecte?", "choices": ["Este o structură bi-stabilă care pivotează", "Pe fața de jos a fiecărui CELL se află un AprilTag Cluster cu 4 AprilTag-uri", "Fiecare HIVE are un CELL roșu și unul albastru", "Își păstrează poziția până când suficiente SCORING ELEMENTS sunt LAUNCHED în CELL-ul orientat în sus"], "correct": ["A", "B", "D"], "source": "9.6"}, {"id": "C2-013", "category": 2, "topic": "HIVE", "difficulty": 3, "type": "single_choice", "question": "Ce dimensiuni aproximative are deschiderea unui CELL?", "choices": ["18 in × 18 in × 18 in", "4 in diametru", "20 in lățime × 14 in înălțime × 12 in adâncime", "24 in × 12 in × 10 in"], "correct": ["C"], "source": "9.6.2"}, {"id": "C2-014", "category": 2, "topic": "FLOWER", "difficulty": 2, "type": "single_choice", "question": "Ce caracteristici are deschiderea de sus a unui FLOWER?", "choices": ["Diametru ~10 in, la ~29 in deasupra TILES", "Diametru ~4 in, la ~21,5 in deasupra TILES", "Diametru ~2,8 in, la nivelul TILES", "Diametru ~4 in, la ~43,95 in deasupra TILES"], "correct": ["B"], "source": "9.7"}, {"id": "C2-015", "category": 2, "topic": "FLOWER", "difficulty": 2, "type": "multiple_choice", "question": "Care afirmații despre FLOWER sunt corecte?", "choices": ["Doar POLLEN poate fi scos prin Retrieval Opening de jos", "FLOWERS sunt atașate de peretele perimetral", "NECTAR poate fi scos prin partea de jos", "POLLEN și NECTAR se introduc prin partea de sus"], "correct": ["A", "B", "D"], "source": "9.7, G418"}, {"id": "C2-016", "category": 2, "topic": "SCORING ELEMENTS", "difficulty": 1, "type": "single_choice", "question": "Câte SCORING ELEMENTS sunt în total într-un MATCH BIOBUZZ?", "choices": ["30 POLLEN și 10 NECTAR", "40 POLLEN, 8 NECTAR roșii și 8 NECTAR albastre", "40 POLLEN și 8 NECTAR", "48 POLLEN și 16 NECTAR"], "correct": ["B"], "source": "9.8"}, {"id": "C2-017", "category": 2, "topic": "SCORING ELEMENTS", "difficulty": 1, "type": "multiple_choice", "question": "Care afirmații despre SCORING ELEMENTS sunt corecte?", "choices": ["POLLEN sunt mai mari decât NECTAR", "Bilele nu sunt perfect sferice și pot varia ca dimensiune", "NECTAR sunt bile roșii sau albastre de ~3,6 in (9,1 cm)", "POLLEN sunt bile galbene de ~2,8 in (7,1 cm)"], "correct": ["B", "C", "D"], "source": "9.8"}, {"id": "C2-022", "category": 2, "topic": "Setup", "difficulty": 1, "type": "single_choice", "question": "Cât POLLEN pre-loaded trebuie să contacteze fiecare robot la începutul meciului?", "choices": ["Între 0 și 6", "Exact 2", "Maximum 4", "Exact 4"], "correct": ["D"], "source": "10.3.4, G304.G"}, {"id": "C2-023", "category": 2, "topic": "Setup", "difficulty": 2, "type": "multiple_choice", "question": "Cum sunt amplasate cele 40 de mingi de POLLEN la începutul meciului?", "choices": ["8 în fiecare CELL", "4 pre-loaded pentru fiecare robot", "4 în fiecare GARDEN", "4 în fiecare dintre cele 4 FLOWERS"], "correct": ["B", "C", "D"], "source": "10.3.1"}, {"id": "C2-024", "category": 2, "topic": "Setup", "difficulty": 2, "type": "multiple_choice", "question": "Cum este amplasat NECTARUL la începutul meciului?", "choices": ["3 NECTAR în fiecare CELL orientat în sus, de culoarea corespunzătoare", "Toate cele 8 NECTAR în LOADING ZONE", "5 NECTAR în fiecare ALLIANCE AREA", "Câte 2 NECTAR în fiecare FLOWER"], "correct": ["A", "C"], "source": "10.3.1"}, {"id": "C2-026", "category": 2, "topic": "Setup", "difficulty": 2, "type": "multiple_choice", "question": "Care sunt cerințe pentru poziționarea robotului la start (G304)?", "choices": ["Să atingă peretele perimetral", "Să nu contacteze o FLOWER și să nu fie în volumul ei de punctare", "Să fie în LOADING ZONE", "Să fie complet pe partea propriei alianțe"], "correct": ["A", "B", "D"], "source": "G304"}, {"id": "C2-031", "category": 2, "topic": "DRIVE TEAM", "difficulty": 1, "type": "single_choice", "question": "Din câte persoane poate fi format, maximum, un DRIVE TEAM?", "choices": ["3", "2", "4", "5"], "correct": ["C"], "source": "10.2"}, {"id": "C2-034", "category": 2, "topic": "Scoring", "difficulty": 1, "type": "single_choice", "question": "Câte puncte valorează un HIVE TIP?", "choices": ["10 în AUTO, 20 în TELEOP", "20 doar în AUTO", "5", "20 (atât în AUTO, cât și în TELEOP)"], "correct": ["D"], "source": "Table 10-2"}, {"id": "C2-035", "category": 2, "topic": "Scoring", "difficulty": 1, "type": "single_choice", "question": "Câte puncte valorează LEAVE și când poate fi obținut?", "choices": ["3 puncte, doar în TELEOP", "3 puncte, doar în AUTO", "2 puncte, oricând", "5 puncte, în AUTO și TELEOP"], "correct": ["B"], "source": "Table 10-2"}, {"id": "C2-036", "category": 2, "topic": "Scoring", "difficulty": 1, "type": "single_choice", "question": "Câte puncte valorează PARK?", "choices": ["10 doar la final", "5 doar în TELEOP", "3 doar în AUTO", "5 în AUTO și 5 în TELEOP"], "correct": ["D"], "source": "Table 10-2"}, {"id": "C2-037", "category": 2, "topic": "Scoring", "difficulty": 2, "type": "single_choice", "question": "Câte puncte valorează fiecare POLLEN sau NECTAR dintr-o FLOWER deținută (owned)?", "choices": ["1", "3", "5", "2"], "correct": ["D"], "source": "Table 10-2"}, {"id": "C2-038", "category": 2, "topic": "Scoring", "difficulty": 2, "type": "single_choice", "question": "Câte puncte valorează fiecare POLLEN sau NECTAR din GARDEN?", "choices": ["1", "3", "2", "5"], "correct": ["A"], "source": "Table 10-2"}, {"id": "C2-039", "category": 2, "topic": "Scoring", "difficulty": 2, "type": "single_choice", "question": "Câte puncte aduce Bottom NECTAR Bonus?", "choices": ["5", "10", "20", "2"], "correct": ["A"], "source": "Table 10-2"}, {"id": "C2-040", "category": 2, "topic": "Scoring", "difficulty": 2, "type": "single_choice", "question": "Câte puncte valorează fiecare POLLEN/NECTAR rămas la final în CELL-ul orientat în sus?", "choices": ["5", "2", "1", "0 – contează doar TIP-ul"], "correct": ["B"], "source": "10.5.1, Table 10-2"}, {"id": "C2-041", "category": 2, "topic": "Scoring", "difficulty": 2, "type": "multiple_choice", "question": "Ce condiții trebuie îndeplinite pentru ca un HIVE să fie considerată TIPPED?", "choices": ["HIVE se oprește în poziție orizontală", "Damper-ul care nu atingea frame-ul începe să-l atingă", "Trece dintr-o stare stabilă în cealaltă, iar CELL-ul orientat în jos devine orientat în sus", "Un robot împinge HIVE cu un MECHANISM"], "correct": ["B", "C"], "source": "10.5.1"}, {"id": "C2-042", "category": 2, "topic": "Scoring", "difficulty": 1, "type": "single_choice", "question": "Care este singura modalitate permisă de a produce un HIVE TIP?", "choices": ["Aruncarea elementelor de către HUMAN PLAYER", "LAUNCH de POLLEN/NECTAR în CELL-ul orientat în sus", "Împingerea frame-ului HIVE", "Lovirea CELL-ului de jos cu un MECHANISM"], "correct": ["B"], "source": "10.5.1, G417"}, {"id": "C2-043", "category": 2, "topic": "Scoring", "difficulty": 2, "type": "single_choice", "question": "Unde trebuie să se afle un element pentru a fi punctat într-un FLOWER?", "choices": ["Cel puțin parțial în volumul dintre inelul de sus și inelul din mijloc", "Complet sub inelul de jos", "Oriunde atinge FLOWER-ul", "Doar în Retrieval Opening"], "correct": ["A"], "source": "10.5.2"}, {"id": "C2-044", "category": 2, "topic": "Scoring", "difficulty": 2, "type": "single_choice", "question": "Ce ALLIANCE deține (owns) un FLOWER?", "choices": ["Cea al cărei NECTAR este cel mai de sus dintre cele care îndeplinesc criteriile de punctare", "Cea mai apropiată de FLOWER", "Cea care a pus primul NECTAR", "Cea care are cele mai multe POLLEN în FLOWER"], "correct": ["A"], "source": "10.5.2"}, {"id": "C2-045", "category": 2, "topic": "Scoring", "difficulty": 2, "type": "multiple_choice", "question": "Un FLOWER conține 3 POLLEN pus de alianța albastră, 1 NECTAR albastru (jos) și 1 NECTAR roșu (cel mai de sus). Care afirmații sunt corecte?", "choices": ["Alianța albastră primește Bottom NECTAR Bonus", "Alianța albastră deține FLOWER-ul pentru că a pus mai multe elemente", "Alianța roșie deține FLOWER-ul", "Alianța roșie primește puncte și pentru POLLEN puse de albaștri"], "correct": ["A", "C", "D"], "source": "10.5.2"}, {"id": "C2-046", "category": 2, "topic": "Scoring", "difficulty": 2, "type": "single_choice", "question": "Când poate începe punctarea în FLOWER fără penalizări?", "choices": ["Când mai sunt 60 de secunde din meci", "De la începutul TELEOP", "Din AUTO", "În ultimele 20 de secunde"], "correct": ["A"], "source": "10.5.2, G410"}, {"id": "C2-047", "category": 2, "topic": "Scoring", "difficulty": 2, "type": "multiple_choice", "question": "Care afirmații despre GARDEN sunt corecte?", "choices": ["NECTARUL ambelor alianțe punctează în GARDEN", "GARDEN-ul este o zonă protejată", "Ambele alianțe pot scoate elemente din oricare GARDEN", "Elementele oferă puncte pentru alianța de culoarea GARDEN-ului, indiferent cine le-a pus"], "correct": ["A", "C", "D"], "source": "10.5.3"}, {"id": "C2-048", "category": 2, "topic": "Scoring", "difficulty": 1, "type": "single_choice", "question": "Ce trebuie să facă un robot pentru LEAVE?", "choices": ["Să treacă pe partea adversă", "Să nu mai atingă peretele perimetral", "Să ajungă în LOADING ZONE", "Să atingă HIVE"], "correct": ["B"], "source": "10.5.4"}, {"id": "C2-049", "category": 2, "topic": "Scoring", "difficulty": 1, "type": "single_choice", "question": "Ce trebuie să facă un robot pentru PARK?", "choices": ["Să atingă o FLOWER", "Să fie sub HIVE", "Să fie complet în GARDEN", "Să fie cel puțin parțial în LOADING ZONE"], "correct": ["D"], "source": "10.5.4"}, {"id": "C2-051", "category": 2, "topic": "Scoring", "difficulty": 2, "type": "single_choice", "question": "Cât NECTAR poate introduce DRIVE TEAM pe FIELD după fiecare HIVE TIP al propriei alianțe (înainte de ultimul minut)?", "choices": ["Toate cele 5", "Niciunul", "1", "2"], "correct": ["C"], "source": "10.1, G426"}, {"id": "C2-052", "category": 2, "topic": "Ranking Points", "difficulty": 1, "type": "single_choice", "question": "Câte RANKING POINTS primește o alianță pentru o victorie?", "choices": ["4", "3", "1", "2"], "correct": ["B"], "source": "Table 10-2"}, {"id": "C2-053", "category": 2, "topic": "Ranking Points", "difficulty": 1, "type": "single_choice", "question": "Câte RANKING POINTS primește fiecare alianță la egalitate?", "choices": ["3", "2", "0", "1"], "correct": ["D"], "source": "Table 10-2"}, {"id": "C2-055", "category": 2, "topic": "Ranking Points", "difficulty": 2, "type": "single_choice", "question": "Care este numărul maxim de RANKING POINTS pe care o alianță îl poate obține într-un meci de calificare?", "choices": ["3", "7", "5", "6"], "correct": ["D"], "source": "Table 10-2"}, {"id": "C2-060", "category": 2, "topic": "Logistică", "difficulty": 2, "type": "multiple_choice", "question": "Ce se întâmplă cu SCORING ELEMENTS care ies de pe FIELD în timpul meciului?", "choices": ["NECTARUL este returnat DRIVE TEAM-ului alianței respective", "Se declară automat ARENA FAULT", "POLLENUL este reintrodus de FIELD STAFF la prima ocazie sigură", "Ambele sunt scoase din joc până la meciul următor"], "correct": ["A", "C"], "source": "10.8.2"}, {"id": "C2-061", "category": 2, "topic": "Logistică", "difficulty": 2, "type": "single_choice", "question": "Un meci începe accidental cu un POLLEN lipsă. Se declară ARENA FAULT?", "choices": ["Doar în playoff", "Nu", "Da, dacă alianța cere", "Da, meciul se rejoacă"], "correct": ["B"], "source": "10.8.2"}, {"id": "C2-062", "category": 2, "topic": "Definiții", "difficulty": 2, "type": "single_choice", "question": "Ce înseamnă CONTROL al unui SCORING ELEMENT?", "choices": ["Elementul este susținut complet de robot sau blocat în/pe/sub el, ori robotul îl împinge intenționat într-o direcție dorită (herding)", "Orice contact accidental cu elementul", "Elementul a fost LAUNCHED și nu mai atinge robotul", "Elementul se află în aceeași zonă cu robotul"], "correct": ["A"], "source": "16 Glossary"}, {"id": "C2-063", "category": 2, "topic": "Definiții", "difficulty": 2, "type": "multiple_choice", "question": "Care dintre următoarele NU reprezintă CONTROL al unui SCORING ELEMENT?", "choices": ["„Bulldozing” – contact accidental cu un element aflat în calea robotului", "Un element ținut complet de intake-ul robotului", "Un element LAUNCHED care nu mai atinge robotul", "„Deflecting” – un element care ricoșează din robot"], "correct": ["A", "C", "D"], "source": "G407"}, {"id": "C2-064", "category": 2, "topic": "Definiții", "difficulty": 2, "type": "single_choice", "question": "Ce înseamnă LAUNCH?", "choices": ["Doar aruncarea în aer peste 1 m", "Introducerea NECTAR de către HUMAN PLAYER", "Elementul este aruncat în aer, propulsat pe podea spre o locație dorită sau aruncat cu forță", "Orice atingere a elementului"], "correct": ["C"], "source": "16 Glossary"}, {"id": "C2-065", "category": 2, "topic": "Robot – dimensiuni", "difficulty": 1, "type": "single_choice", "question": "Care este dimensiunea maximă a robotului în STARTING CONFIGURATION?", "choices": ["24 in × 24 in × 24 in", "18 in × 18 in × 18 in", "18 in × 18 in × 24 in", "18 in × 24 in × 29 in"], "correct": ["B"], "source": "R102"}, {"id": "C2-066", "category": 2, "topic": "Robot – dimensiuni", "difficulty": 1, "type": "single_choice", "question": "Care este volumul maxim de expansiune după începerea meciului?", "choices": ["Nu există limită de expansiune", "18 in × 24 in × 29 in înălțime", "24 in × 24 in × 36 in", "18 in × 18 in × 18 in"], "correct": ["B"], "source": "R105"}, {"id": "C2-067", "category": 2, "topic": "Robot – dimensiuni", "difficulty": 2, "type": "multiple_choice", "question": "Care afirmații despre limitele de dimensiune sunt corecte?", "choices": ["Robotul trebuie limitat fizic (mecanic), nu doar prin software", "Robotul nu are voie să detașeze intenționat componente", "Un robot ușor înclinat după o coliziune încalcă automat regula", "POLLENUL pre-loaded poate ieși din cubul de 18 in"], "correct": ["A", "B", "D"], "source": "R102, R105"}, {"id": "C2-068", "category": 2, "topic": "Robot – dimensiuni", "difficulty": 2, "type": "single_choice", "question": "Care este limita de greutate a robotului în BIOBUZZ?", "choices": ["15 kg", "20 kg", "Nu există limită explicită de greutate", "42 lbs"], "correct": ["C"], "source": "R104"}, {"id": "C2-069", "category": 2, "topic": "Robot – dimensiuni", "difficulty": 3, "type": "single_choice", "question": "Un robot are două mecanisme independente (fără legătură mecanică) care se pot extinde simultan în părți opuse. Când este acest design ilegal?", "choices": ["Doar dacă depășesc 29 in înălțime", "Întotdeauna", "Când dimensiunea orizontală totală la extensia mecanică maximă depășește limita", "Niciodată, dacă software-ul le împiedică să se extindă simultan"], "correct": ["C"], "source": "R105, Figure 12-5"}, {"id": "C2-070", "category": 2, "topic": "Actuatoare", "difficulty": 1, "type": "single_choice", "question": "Câte motoare și câte servo-uri poate avea, maximum, un robot?", "choices": ["8 motoare și 8 servo-uri", "8 motoare și 12 servo-uri", "6 motoare și 8 servo-uri", "10 motoare și 10 servo-uri"], "correct": ["A"], "source": "R503"}, {"id": "C2-071", "category": 2, "topic": "Actuatoare", "difficulty": 2, "type": "single_choice", "question": "Un robot folosește două configurații la același eveniment, cu mecanisme diferite. Cum se aplică limita de motoare și servo-uri?", "choices": ["Suma tuturor motoarelor și servo-urilor din toate configurațiile trebuie să respecte limita", "Fiecare configurație, separat, trebuie să respecte limita", "Limita se dublează pentru două configurații", "Se ia în calcul doar configurația folosită la inspecție"], "correct": ["A"], "source": "R503, I302"}, {"id": "C2-075", "category": 2, "topic": "Actuatoare", "difficulty": 2, "type": "multiple_choice", "question": "Care dintre următoarele motoare sunt legale (R501)?", "choices": ["Un motor brushless de dronă", "goBILDA Yellow Jacket 520x", "AndyMark NeveRest", "REV Robotics HD Hex"], "correct": ["B", "C", "D"], "source": "R501"}, {"id": "C2-077", "category": 2, "topic": "Actuatoare", "difficulty": 1, "type": "single_choice", "question": "Sunt permise releele, electromagneții și solenoizii electrici?", "choices": ["Doar solenoizii", "Da, dacă sunt COTS", "Doar electromagneții", "Nu"], "correct": ["D"], "source": "R506"}, {"id": "C2-078", "category": 2, "topic": "Actuatoare", "difficulty": 2, "type": "multiple_choice", "question": "Ce modificări ale unui motor/servo sunt permise (R504)?", "choices": ["Modificarea suporturilor de montare sau a arborelui de ieșire", "Modificarea servo-ului pentru rotație continuă, conform producătorului", "Rebobinarea motorului pentru mai multă putere", "Scurtarea cablurilor și adăugarea de conectori"], "correct": ["A", "B", "D"], "source": "R504"}, {"id": "C2-079", "category": 2, "topic": "Alimentare", "difficulty": 1, "type": "single_choice", "question": "Câte baterii principale poate avea un robot?", "choices": ["Maximum 2 baterii de 12 V", "Exact 1 baterie NiMH de 12 V aprobată", "Oricâte, dacă sunt NiMH", "1 baterie LiPo"], "correct": ["B"], "source": "R601"}, {"id": "C2-082", "category": 2, "topic": "Alimentare", "difficulty": 2, "type": "multiple_choice", "question": "Care afirmații despre main power switch sunt corecte?", "choices": ["Trebuie să existe exact un main power switch, din lista aprobată", "Trebuie să fie accesibil, departe de piese în mișcare rapidă", "Poate fi montat sub un panou detașabil", "Sunt interzise switch-urile secundare"], "correct": ["A", "B", "C"], "source": "R603"}, {"id": "C2-089", "category": 2, "topic": "Control", "difficulty": 2, "type": "multiple_choice", "question": "Ce poate fi ROBOT CONTROLLER-ul?", "choices": ["Un Raspberry Pi", "Un smartphone Android conectat la un REV Expansion Hub", "Un REV Control Hub", "Un Arduino"], "correct": ["B", "C"], "source": "R701"}, {"id": "C2-090", "category": 2, "topic": "Control", "difficulty": 2, "type": "single_choice", "question": "Câte REV Expansion Hub-uri suplimentare poate avea robotul pe lângă ROBOT CONTROLLER?", "choices": ["Maximum două", "Oricâte", "Maximum unul", "Niciunul"], "correct": ["C"], "source": "R701"}, {"id": "C2-091", "category": 2, "topic": "Control", "difficulty": 3, "type": "multiple_choice", "question": "Care coprocesoare de viziune sunt permise?", "choices": ["Limelight 3A (programabil, suportat nativ de FTC SDK)", "OpenMV Cam", "Limelight 3G", "DFRobot HuskyLens (configurabil, nu programabil)"], "correct": ["A", "D"], "source": "R702"}, {"id": "C2-092", "category": 2, "topic": "Control", "difficulty": 2, "type": "multiple_choice", "question": "Care afirmații despre folosirea rețelei Wi-Fi (R704) sunt corecte?", "choices": ["Nu este permis un stream video continuu", "FTC Dashboard și alte servicii terțe de streaming sunt interzise", "Echipele pot folosi Bluetooth pentru gamepad", "Laptopurile de programare trebuie deconectate de la rețeaua robotului în timpul meciurilor"], "correct": ["A", "B", "D"], "source": "R704, R904"}, {"id": "C2-093", "category": 2, "topic": "Control", "difficulty": 1, "type": "single_choice", "question": "Cum trebuie denumit ROBOT CONTROLLER-ul echipei 12345?", "choices": ["Robot12345", "RC-12345", "12345-DS", "12345-RC"], "correct": ["D"], "source": "R705"}, {"id": "C2-096", "category": 2, "topic": "Control", "difficulty": 2, "type": "multiple_choice", "question": "Cum trebuie configurate dispozitivele Android (R711)?", "choices": ["Wi-Fi activat pe ROBOT CONTROLLER și DRIVER STATION", "REV Control Hub cu parolă Wi-Fi schimbată (non-default)", "Bluetooth activat pentru gamepad-uri", "Smartphone-urile în Airplane Mode"], "correct": ["A", "B", "D"], "source": "R711"}, {"id": "C2-098", "category": 2, "topic": "Pneumatică", "difficulty": 2, "type": "single_choice", "question": "Un flywheel de mare viteză folosit pentru a lansa POLLEN este considerat dispozitiv de flux de aer de mare viteză (interzis)?", "choices": ["Da, dacă depășește 3000 RPM", "Doar dacă are carcasă", "Nu, nu de unul singur", "Da, întotdeauna"], "correct": ["C"], "source": "R801"}, {"id": "C2-101", "category": 2, "topic": "ROBOT SIGN", "difficulty": 1, "type": "single_choice", "question": "Câți ROBOT SIGNS trebuie să aibă, minim, un robot?", "choices": ["2, pe suprafețe aflate la cel puțin 90° una de alta", "1", "3", "4, câte unul pe fiecare parte"], "correct": ["A"], "source": "R401"}, {"id": "C2-102", "category": 2, "topic": "ROBOT SIGN", "difficulty": 2, "type": "multiple_choice", "question": "Care sunt cerințe pentru ROBOT SIGN?", "choices": ["Minim 6,5 in lățime și 2,5 in înălțime", "Fundal roșu sau albastru opac, conform alianței", "Numărul poate fi afișat pe un display LED", "Cifre albe, opace, de aproximativ 2,25 in"], "correct": ["A", "B", "D"], "source": "R401-R403"}, {"id": "C2-107", "category": 2, "topic": "Fabricare", "difficulty": 1, "type": "single_choice", "question": "Pot fi folosite SCORING ELEMENTS (sau replici) în construcția robotului?", "choices": ["Da, dacă sunt vopsite", "Nu", "Da, ca roți", "Da, doar ca balast"], "correct": ["B"], "source": "R305"}, {"id": "C2-109", "category": 2, "topic": "Siguranță robot", "difficulty": 2, "type": "multiple_choice", "question": "Care dintre următoarele sunt interzise pe robot (R201/R202)?", "choices": ["Balast liber, de exemplu nisip sau bile de rulment nefixate", "Imagini care imită AprilTag-uri 36h11", "Benzi de cauciuc pe roți care nu deteriorează TILES", "Materiale de origine animală"], "correct": ["A", "B", "D"], "source": "R201, R202"}, {"id": "C2-111", "category": 2, "topic": "Siguranță robot", "difficulty": 1, "type": "single_choice", "question": "Este permis un mecanism care crește aderența prin aspirație (suction) sau prin agățarea de suprafața FIELD-ului?", "choices": ["Da", "Nu", "Doar în AUTO", "Doar dacă este COTS"], "correct": ["B"], "source": "R204"}, {"id": "C2-112", "category": 2, "topic": "Definiții robot", "difficulty": 2, "type": "single_choice", "question": "Care este diferența dintre COMPONENT și MECHANISM?", "choices": ["COMPONENT este întotdeauna COTS; MECHANISM este întotdeauna fabricat", "MECHANISM are întotdeauna un motor", "Sunt sinonime", "COMPONENT nu poate fi dezasamblată fără deteriorare; MECHANISM poate fi dezasamblat și reasamblat"], "correct": ["D"], "source": "12"}, {"id": "C3-001", "category": 3, "topic": "Tipuri de penalizări", "difficulty": 1, "type": "single_choice", "question": "Ce înseamnă un MINOR FOUL?", "choices": ["20 de puncte adăugate adversarului", "Un avertisment fără puncte", "5 puncte adăugate la scorul adversarului", "5 puncte scăzute din scorul propriu"], "correct": ["C"], "source": "Table 10-4"}, {"id": "C3-002", "category": 3, "topic": "Tipuri de penalizări", "difficulty": 1, "type": "single_choice", "question": "Ce înseamnă un MAJOR FOUL?", "choices": ["20 de puncte scăzute din scorul propriu", "20 de puncte adăugate la scorul adversarului", "Descalificare din meci", "10 puncte adăugate adversarului"], "correct": ["B"], "source": "Table 10-4"}, {"id": "C3-003", "category": 3, "topic": "Tipuri de penalizări", "difficulty": 1, "type": "single_choice", "question": "Ce se întâmplă când o echipă primește al doilea YELLOW CARD în aceeași fază a turneului?", "choices": ["Se transformă automat în RED CARD", "Nu se întâmplă nimic în plus", "Primește un MAJOR FOUL", "Echipa este eliminată din eveniment"], "correct": ["A"], "source": "Table 10-4, 10.6.1"}, {"id": "C3-004", "category": 3, "topic": "Tipuri de penalizări", "difficulty": 1, "type": "single_choice", "question": "Ce înseamnă DISQUALIFIED într-un meci de calificare?", "choices": ["Echipa pierde toate RP-urile acumulate", "Echipa nu mai poate juca la eveniment", "Echipa primește 0 MATCH points și 0 RANKING POINTS", "Alianța întreagă primește 0 puncte"], "correct": ["C"], "source": "Table 10-4"}, {"id": "C3-005", "category": 3, "topic": "Tipuri de penalizări", "difficulty": 2, "type": "single_choice", "question": "În calificări, o echipă este DISQUALIFIED. Ce efect are asupra partenerului de alianță?", "choices": ["Partenerul primește și el 0 RP", "Partenerul primește un YELLOW CARD", "Partenerul pierde jumătate din puncte", "Niciun efect"], "correct": ["D"], "source": "T601"}, {"id": "C3-006", "category": 3, "topic": "Tipuri de penalizări", "difficulty": 2, "type": "single_choice", "question": "În playoff, o echipă este DISQUALIFIED. Ce se întâmplă?", "choices": ["Doar echipa respectivă primește 0 puncte", "Alianța primește un MAJOR FOUL", "Meciul se rejoacă", "Toată alianța primește 0 MATCH points"], "correct": ["D"], "source": "13.7, Table 10-4"}, {"id": "C3-007", "category": 3, "topic": "Tipuri de penalizări", "difficulty": 1, "type": "single_choice", "question": "Ce înseamnă DISABLED?", "choices": ["REFEREE cere oprirea robotului, care rămâne inoperabil până la finalul meciului", "Robotul este descalificat din eveniment", "Robotul trebuie reinspectat imediat", "Robotul pierde punctele din AUTO"], "correct": ["A"], "source": "Table 10-4"}, {"id": "C3-008", "category": 3, "topic": "Tipuri de penalizări", "difficulty": 2, "type": "single_choice", "question": "Cine poate declara un robot DISABLED în timpul meciului?", "choices": ["Event Director", "Echipa adversă", "Doar REFEREES", "Orice membru FIELD STAFF"], "correct": ["C"], "source": "T402"}, {"id": "C3-009", "category": 3, "topic": "Cartonașe", "difficulty": 2, "type": "single_choice", "question": "O echipă a primit un YELLOW CARD. Ce se întâmplă în meciurile următoare?", "choices": ["Echipa nu mai poate fi aleasă în playoff", "Echipa „poartă” un YELLOW CARD, iar numărul ei apare pe fundal galben pe ecran", "Echipa pornește fiecare meci cu un MINOR FOUL", "Cartonașul dispare după meci"], "correct": ["B"], "source": "10.6.1"}, {"id": "C3-011", "category": 3, "topic": "Cartonașe", "difficulty": 2, "type": "multiple_choice", "question": "Când se șterg YELLOW CARDS?", "choices": ["La finalul Qualification MATCHES", "După fiecare meci", "La finalul Practice MATCHES", "La finalul Playoff-ului diviziei"], "correct": ["A", "C", "D"], "source": "10.6.1"}, {"id": "C3-013", "category": 3, "topic": "Cartonașe", "difficulty": 2, "type": "single_choice", "question": "Un cartonaș este primit între finalul calificărilor și începutul playoff-ului. Cui se aplică?", "choices": ["Nu se aplică", "Primului meci de playoff al alianței", "Ultimului meci de calificare", "Întregului eveniment, ca descalificare"], "correct": ["B"], "source": "Table 10-5"}, {"id": "C3-015", "category": 3, "topic": "Cartonașe", "difficulty": 2, "type": "single_choice", "question": "Ce se întâmplă cu un YELLOW sau RED CARD dacă acțiunea a fost cauzată de un ARENA FAULT?", "choices": ["Se transformă în MAJOR FOUL", "Cartonașul este anulat", "Rămâne valabil", "Se transformă în VERBAL WARNING"], "correct": ["B"], "source": "10.6.1"}, {"id": "C3-016", "category": 3, "topic": "Cartonașe", "difficulty": 2, "type": "multiple_choice", "question": "Cum se aplică YELLOW/RED CARDS în playoff?", "choices": ["Întregii alianțe a echipei care a încălcat regula", "Dacă alianța primește 2 YELLOW CARDS, întreaga alianță primește RED CARD", "Doar echipei care a încălcat regula", "Nu se dau cartonașe în playoff"], "correct": ["A", "B"], "source": "10.6.3"}, {"id": "C3-017", "category": 3, "topic": "Cartonașe", "difficulty": 2, "type": "single_choice", "question": "Când nu mai este un meci considerat „meciul curent” pentru aplicarea cartonașelor?", "choices": ["După afișarea rezultatelor sau după semnalul de recuperare a roboților – oricare e mai târziu", "La începutul meciului următor", "După 10 minute", "Imediat la sunetul de final"], "correct": ["A"], "source": "Table 10-5"}, {"id": "C3-020", "category": 3, "topic": "Termeni", "difficulty": 1, "type": "single_choice", "question": "Ce înseamnă REPEATED?", "choices": ["Acțiuni care se întâmplă de mai multe ori în același meci", "Acțiuni care durează peste 10 secunde", "Acțiuni repetate în meciuri diferite", "Acțiuni repetate de ambii roboți ai alianței"], "correct": ["A"], "source": "10.6"}, {"id": "C3-022", "category": 3, "topic": "Termeni", "difficulty": 2, "type": "multiple_choice", "question": "Când poate o echipă primi o atenție sporită din partea REFEREES privind o încălcare STRATEGIC?", "choices": ["Când primește mai multe avertismente în același meci pentru aceeași încălcare", "Când are un robot foarte rapid", "Când primește mai multe VERBAL WARNINGS în meciuri diferite pentru aceeași încălcare", "Când câștigă la diferență mare"], "correct": ["A", "C"], "source": "10.6"}, {"id": "C3-024", "category": 3, "topic": "Termeni", "difficulty": 3, "type": "single_choice", "question": "O regulă are penalizarea „MAJOR FOUL și încă un MAJOR FOUL la fiecare 3 secunde în care situația nu e corectată”. Un robot este în încălcare timp de 15 secunde. Câte puncte primește adversarul?", "choices": ["20 (1 MAJOR FOUL)", "100 (5 MAJOR FOULS)", "300 (15 MAJOR FOULS)", "120 (6 MAJOR FOULS)"], "correct": ["D"], "source": "Table 10-6"}, {"id": "C3-025", "category": 3, "topic": "Termeni", "difficulty": 2, "type": "single_choice", "question": "O singură acțiune încalcă două reguli diferite (care nu sunt declarate exclusive). Ce se întâmplă?", "choices": ["Se aplică doar penalizarea mai mică", "Nu se aplică nicio penalizare", "Se rejoacă meciul", "Se pot aplica penalizările ambelor reguli"], "correct": ["D"], "source": "10.6"}, {"id": "C3-026", "category": 3, "topic": "Siguranță", "difficulty": 1, "type": "single_choice", "question": "Un membru al DRIVE TEAM pășește pe FIELD în timpul meciului. Ce sancțiune prevede G101?", "choices": ["MAJOR FOUL", "RED CARD", "VERBAL WARNING", "MINOR FOUL"], "correct": ["C"], "source": "G101"}, {"id": "C3-027", "category": 3, "topic": "Siguranță", "difficulty": 2, "type": "multiple_choice", "question": "Care acțiuni ale DRIVE TEAM în raport cu FIELD-ul sunt permise?", "choices": ["Arătarea cu brațul peste perete, fără a influența meciul", "Mutarea peretelui perimetral din poziție", "Sprijinirea (bracing) peretelui perimetral", "Agățarea de elementele ARENA"], "correct": ["A", "C"], "source": "G101, G102"}, {"id": "C3-028", "category": 3, "topic": "Conduită", "difficulty": 2, "type": "single_choice", "question": "Care este sancțiunea pentru G201 (comportament necivilizat)?", "choices": ["RED CARD direct", "Doar VERBAL WARNING, indiferent de câte ori", "VERBAL WARNING; YELLOW CARD la încălcări ulterioare în cadrul evenimentului", "MAJOR FOUL"], "correct": ["C"], "source": "G201"}, {"id": "C3-029", "category": 3, "topic": "Conduită", "difficulty": 2, "type": "multiple_choice", "question": "Care dintre următoarele încalcă G202 (Competition Integrity Contract în meci)?", "choices": ["A provoca/batjocori adversarii", "A cere altei echipe să rateze intenționat un RP", "A pierde intenționat un meci pentru a manipula clasamentul", "O strategie neconvențională în care un robot joacă doar defensiv"], "correct": ["A", "B", "C"], "source": "G202"}, {"id": "C3-030", "category": 3, "topic": "Conduită", "difficulty": 1, "type": "single_choice", "question": "O echipă al cărei robot a trecut inspecția nu trimite niciun membru la meciul de calificare. Ce sancțiune primește?", "choices": ["VERBAL WARNING", "DISQUALIFIED din meciul respectiv", "MAJOR FOUL", "Nicio sancțiune"], "correct": ["B"], "source": "G203"}, {"id": "C3-031", "category": 3, "topic": "Conduită", "difficulty": 2, "type": "multiple_choice", "question": "Ce prevede G204 pentru o acțiune care forțează deliberat adversarul să încalce o regulă?", "choices": ["MAJOR FOUL per instance pentru alianța care forțează", "YELLOW CARD per meci dacă se repetă", "Alianța forțată nu este penalizată", "Ambele alianțe primesc MINOR FOUL"], "correct": ["A", "B", "C"], "source": "G204"}, {"id": "C3-032", "category": 3, "topic": "Conduită", "difficulty": 2, "type": "single_choice", "question": "O echipă încalcă intenționat o regulă care duce doar la YELLOW CARD, în ultimul său meci de calificare (înainte ca YELLOW CARDS să se șteargă). Ce prevede G205?", "choices": ["Head REFEREE nu poate interveni", "Situația va fi tratată cu atenție sporită și probabil va duce la RED CARD", "Este permis, deoarece cartonașele se șterg oricum", "Echipa primește doar VERBAL WARNING"], "correct": ["B"], "source": "G205"}, {"id": "C3-033", "category": 3, "topic": "Pre-MATCH", "difficulty": 2, "type": "single_choice", "question": "Care este sancțiunea pentru întârzierea semnificativă a începerii meciului (G301)?", "choices": ["Pierderea automată a meciului", "RED CARD direct", "VERBAL WARNING; MAJOR FOUL pentru meciul următor dacă se repetă în aceeași fază", "MINOR FOUL per minut"], "correct": ["C"], "source": "G301"}, {"id": "C3-034", "category": 3, "topic": "Pre-MATCH", "difficulty": 2, "type": "single_choice", "question": "După VERBAL WARNING/MAJOR FOUL pentru G301, în cât timp trebuie echipa să fie MATCH ready ca robotul să nu fie DISABLED (dacă nu face eforturi de bună-credință)?", "choices": ["30 de secunde", "2 minute", "5 minute", "8 minute"], "correct": ["B"], "source": "G301"}, {"id": "C3-036", "category": 3, "topic": "Pre-MATCH", "difficulty": 2, "type": "multiple_choice", "question": "Care dintre următoarele sunt considerate eforturi de bună-credință de a deveni MATCH ready (nu încalcă G301)?", "choices": ["Aplicarea de bandă/coliere pentru a respecta STARTING CONFIGURATION", "Un „wiggle test” MOMENTARY pentru a verifica comunicarea", "Schimbarea completă a intake-ului lângă FIELD", "Așteptarea pornirii DRIVER STATION"], "correct": ["A", "B", "D"], "source": "G301"}, {"id": "C3-038", "category": 3, "topic": "Pre-MATCH", "difficulty": 3, "type": "single_choice", "question": "Un robot care NU respectă cerințele de inspecție/re-inspecție (G303.B) participă la meci. Ce sancțiune primește?", "choices": ["RED CARD", "VERBAL WARNING", "MAJOR FOUL", "MINOR FOUL"], "correct": ["A"], "source": "G303"}, {"id": "C3-039", "category": 3, "topic": "Pre-MATCH", "difficulty": 2, "type": "single_choice", "question": "Ce se întâmplă dacă un robot nu este poziționat corect la start (G304) și problema nu se rezolvă rapid?", "choices": ["Robotul primește un MAJOR FOUL", "Meciul se amână 10 minute", "Alianța pierde automat meciul", "Robotul este DISABLED sau scos de pe FIELD"], "correct": ["D"], "source": "G304"}, {"id": "C3-041", "category": 3, "topic": "AUTO", "difficulty": 2, "type": "multiple_choice", "question": "Ce poate face DRIVE TEAM cu robotul sau OPERATOR CONSOLE în timpul AUTO, fără a încălca G401?", "choices": ["Să corecteze traiectoria cu gamepad-ul", "Să apese ▶ start într-o marjă MOMENTARY de la startul meciului", "Să apese ■ stop", "Să intervină pentru siguranță"], "correct": ["B", "C", "D"], "source": "G401"}, {"id": "C3-042", "category": 3, "topic": "AUTO", "difficulty": 2, "type": "single_choice", "question": "Ce sancțiune prevede G402 pentru perturbarea AUTO a alianței adverse?", "choices": ["MAJOR FOUL per meci; MAJOR FOUL și YELLOW CARD per meci dacă e STRATEGIC", "MINOR FOUL per element", "RED CARD direct", "VERBAL WARNING"], "correct": ["A"], "source": "G402"}, {"id": "C3-043", "category": 3, "topic": "AUTO", "difficulty": 2, "type": "multiple_choice", "question": "Care acțiuni sunt exemple de perturbare a AUTO advers (G402)?", "choices": ["Rămânerea pe propria parte de FIELD", "CONTROL al SCORING ELEMENTS de pe partea adversă", "Contactul cu un robot advers pe partea lui de FIELD", "Un POLLEN deviat de un element de FIELD care ajunge pe partea adversă"], "correct": ["B", "C"], "source": "G402"}, {"id": "C3-044", "category": 3, "topic": "Tranziție", "difficulty": 2, "type": "single_choice", "question": "Robotul se mișcă (powered movement) în perioada de tranziție de 8 s dintre AUTO și TELEOP. Ce prevede G403?", "choices": ["Este permis dacă e mișcare din inerție", "MINOR FOUL", "VERBAL WARNING; MAJOR FOUL și YELLOW CARD per meci dacă e STRATEGIC", "RED CARD"], "correct": ["C"], "source": "G403"}, {"id": "C3-045", "category": 3, "topic": "Tranziție", "difficulty": 2, "type": "multiple_choice", "question": "Care mișcări NU sunt considerate „powered movement” (G403/G404)?", "choices": ["Mișcarea la dezactivarea actuatoarelor", "Mișcarea din inerție", "Un servo care se mișcă la apăsarea INIT", "Mișcarea datorată gravitației"], "correct": ["A", "B", "D"], "source": "G403, G404"}, {"id": "C3-046", "category": 3, "topic": "SCORING ELEMENTS", "difficulty": 2, "type": "single_choice", "question": "Un robot aruncă deliberat un POLLEN peste peretele FIELD-ului. Ce sancțiune primește?", "choices": ["VERBAL WARNING", "YELLOW CARD", "MAJOR FOUL per SCORING ELEMENT", "MINOR FOUL"], "correct": ["C"], "source": "G405"}, {"id": "C3-047", "category": 3, "topic": "SCORING ELEMENTS", "difficulty": 2, "type": "multiple_choice", "question": "Care dintre următoarele NU sunt încălcări ale G405 (ejectarea elementelor)?", "choices": ["Un element care iese în urma unei interacțiuni robot-robot", "Aruncarea deliberată a unui element, ricoșat de un robot advers, în afara FIELD-ului", "Un element care sare din HIVE după un TIP normal", "Un element care iese de pe FIELD în timpul unei încercări de punctare"], "correct": ["A", "C", "D"], "source": "G405"}, {"id": "C3-048", "category": 3, "topic": "SCORING ELEMENTS", "difficulty": 1, "type": "single_choice", "question": "Câte SCORING ELEMENTS poate controla simultan un robot?", "choices": ["Maximum 4", "Maximum 5", "Maximum 6", "Nelimitat"], "correct": ["A"], "source": "G407"}, {"id": "C3-049", "category": 3, "topic": "SCORING ELEMENTS", "difficulty": 2, "type": "multiple_choice", "question": "Care acțiuni sunt probabil considerate STRATEGIC pentru G407?", "choices": ["CONTROL repetat, peste MOMENTARY, a 5+ elemente în același meci", "CONTROL MOMENTARY a 5 elemente, inversat rapid", "Un robot preia 6 elemente și le duce spre o zonă de punctare", "Bulldozing accidental al unor elemente"], "correct": ["A", "C"], "source": "G407"}, {"id": "C3-050", "category": 3, "topic": "SCORING ELEMENTS", "difficulty": 2, "type": "single_choice", "question": "Ce sancțiune prevede G408 pentru CONTROL al NECTAR-ului advers?", "choices": ["MAJOR FOUL per NECTAR", "RED CARD", "VERBAL WARNING; YELLOW CARD per meci dacă e STRATEGIC", "MINOR FOUL per NECTAR"], "correct": ["C"], "source": "G408"}, {"id": "C3-051", "category": 3, "topic": "SCORING ELEMENTS", "difficulty": 2, "type": "multiple_choice", "question": "Care acțiuni sunt probabil considerate STRATEGIC pentru G409 (prinderea elementelor din HIVE)?", "choices": ["Un robot care trece pe sub HIVE și pe care aterizează 1-2 POLLEN", "Un mecanism în partea de sus care se deschide pentru a prinde elemente", "Un robot nefuncțional, oprit sub HIVE, pe care se adună elemente", "Un robot oprit repetat sub HIVE, așteptând TIP-ul pentru a colecta elementele"], "correct": ["B", "D"], "source": "G409"}, {"id": "C3-052", "category": 3, "topic": "SCORING ELEMENTS", "difficulty": 1, "type": "single_choice", "question": "Un robot pune NECTAR în FLOWER cu 70 de secunde rămase. Ce sancțiune primește?", "choices": ["Nicio sancțiune", "VERBAL WARNING", "MINOR FOUL per NECTAR", "MAJOR FOUL per NECTAR"], "correct": ["D"], "source": "G410"}, {"id": "C3-053", "category": 3, "topic": "SCORING ELEMENTS", "difficulty": 2, "type": "single_choice", "question": "Care este sancțiunea pentru „hoarding” – împiedicarea STRATEGIC a accesului adversarului la SCORING ELEMENTS (G411)?", "choices": ["RED CARD", "MINOR FOUL per element", "MAJOR FOUL și YELLOW CARD per meci", "VERBAL WARNING"], "correct": ["C"], "source": "G411"}, {"id": "C3-054", "category": 3, "topic": "SCORING ELEMENTS", "difficulty": 2, "type": "multiple_choice", "question": "Care dintre următoarele reprezintă încălcări ale G411 - \"Do not hoard SCORING ELEMENTS\"?", "choices": ["Folosirea propriilor NECTAR și POLLEN pentru punctare", "Strângerea elementelor relevante într-o porțiune limitată a FIELD-ului pentru a le face inaccesibile", "Poziționarea robotului pentru a împiedica activ accesul adversarului la ele", "Scoaterea elementelor din GARDEN-ul advers"], "correct": ["B", "C"], "source": "G411, 10.5.3"}, {"id": "C3-055", "category": 3, "topic": "Robot", "difficulty": 2, "type": "single_choice", "question": "Un robot lovește un REFEREE aflat în afara FIELD-ului. Ce prevede G412?", "choices": ["DISABLED și VERBAL WARNING; DISABLED și YELLOW CARD la încălcări ulterioare", "MINOR FOUL", "RED CARD direct", "MAJOR FOUL"], "correct": ["A"], "source": "G412"}, {"id": "C3-056", "category": 3, "topic": "Robot", "difficulty": 2, "type": "single_choice", "question": "REFEREE cere oprirea robotului, iar echipa continuă STRATEGIC să-l conducă. Ce prevede G413?", "choices": ["RED CARD", "MINOR FOUL", "MAJOR FOUL", "VERBAL WARNING și atât"], "correct": ["A"], "source": "G413"}, {"id": "C3-057", "category": 3, "topic": "Robot", "difficulty": 2, "type": "single_choice", "question": "Ce sancțiune prevede G414 dacă numărul echipei/culoarea alianței devin de nedeterminat?", "choices": ["RED CARD", "DISABLED", "MAJOR FOUL", "VERBAL WARNING; YELLOW CARD dacă e STRATEGIC"], "correct": ["D"], "source": "G414"}, {"id": "C3-058", "category": 3, "topic": "Robot", "difficulty": 2, "type": "multiple_choice", "question": "Care interacțiuni cu elementele ARENA (în afară de SCORING ELEMENTS) sunt interzise (G415)?", "choices": ["Apucarea (grabbing)", "Atașarea sau suspendarea de ele", "Încâlcirea cu ele", "O formă concavă care înconjoară parțial o FLOWER pentru aliniere"], "correct": ["A", "B", "C"], "source": "G415"}, {"id": "C3-059", "category": 3, "topic": "Robot", "difficulty": 2, "type": "single_choice", "question": "Un robot depășește volumul de expansiune în timpul meciului (G416). Ce sancțiune primește?", "choices": ["MINOR FOUL", "VERBAL WARNING; MAJOR FOUL per instance dacă e STRATEGIC", "RED CARD", "DISABLED automat"], "correct": ["B"], "source": "G416"}, {"id": "C3-060", "category": 3, "topic": "Robot", "difficulty": 2, "type": "multiple_choice", "question": "Care acțiuni sunt probabil considerate STRATEGIC pentru G417 (interferența cu HIVE)?", "choices": ["O încercare de LAUNCH ratată care lovește partea de jos a CELL-ului", "LAUNCH deliberat al elementelor în fețele exterioare ale CELL-ului", "Împiedicarea TIP-ului HIVE adverse prin LAUNCH de elemente spre ea", "Lovirea frame-ului HIVE cu viteză mare"], "correct": ["B", "C", "D"], "source": "G417"}, {"id": "C3-061", "category": 3, "topic": "Robot", "difficulty": 2, "type": "multiple_choice", "question": "Care acțiuni sunt probabil considerate STRATEGIC pentru G418 (interferența cu FLOWERS)?", "choices": ["Un robot ține deliberat un NECTAR lângă țevile FLOWER-ului ca să îndeplinească criteriul de punctare", "Un robot scoate accidental un POLLEN în timp ce încearcă să puncteze altul", "Un robot apucă FLOWER-ul și îl scutură", "Un robot trage POLLEN prin partea laterală a FLOWER-ului"], "correct": ["A", "C", "D"], "source": "G418"}, {"id": "C3-062", "category": 3, "topic": "Robot", "difficulty": 1, "type": "single_choice", "question": "Ce sancțiune primește un robot care încalcă G417 sau G418 fără să fie STRATEGIC?", "choices": ["MAJOR FOUL", "YELLOW CARD", "VERBAL WARNING", "MINOR FOUL"], "correct": ["C"], "source": "G417, G418"}, {"id": "C3-063", "category": 3, "topic": "Adversar", "difficulty": 2, "type": "single_choice", "question": "Care este sancțiunea dacă un robot avariază STRATEGIC un robot advers, iar acesta nu mai poate conduce (G419)?", "choices": ["MAJOR FOUL și RED CARD per instance", "VERBAL WARNING", "MAJOR FOUL și YELLOW CARD", "MINOR FOUL"], "correct": ["A"], "source": "G419"}, {"id": "C3-064", "category": 3, "topic": "Adversar", "difficulty": 2, "type": "single_choice", "question": "O singură interacțiune robot-robot încalcă atât G419, cât și G420. Ce penalizare se aplică?", "choices": ["Ambele penalizări", "Niciuna", "Doar cea mai severă dintre ele", "Cea mai blândă"], "correct": ["C"], "source": "11.4.5"}, {"id": "C3-066", "category": 3, "topic": "Adversar", "difficulty": 2, "type": "single_choice", "question": "Ce înseamnă „unable to drive” în G419/G420?", "choices": ["Robotul a pierdut un MECHANISM", "Robotul este complet oprit", "DRIVER-ul nu mai poate duce robotul în locul dorit într-un timp rezonabil (de ex. merge doar în cerc)", "Robotul nu mai poate puncta"], "correct": ["C"], "source": "G419, G420"}, {"id": "C3-067", "category": 3, "topic": "Adversar", "difficulty": 2, "type": "multiple_choice", "question": "Care acțiuni sunt probabil considerate STRATEGIC pentru G420 (răsturnare/încâlcire)?", "choices": ["O singură coliziune frame-la-frame normală, după care adversarul se răstoarnă", "Folosirea unui mecanism tip pană pentru a răsturna adversarul", "Contact evitabil cu un robot care deja a început să se răstoarne", "Contact frame-la-frame cu un robot care încearcă să se ridice, răsturnându-l din nou"], "correct": ["B", "C", "D"], "source": "G420"}, {"id": "C3-068", "category": 3, "topic": "Adversar", "difficulty": 1, "type": "single_choice", "question": "Cât timp poate un robot să facă PIN unui robot advers înainte de a fi penalizat?", "choices": ["10 secunde", "5 secunde", "Nu există limită", "3 secunde"], "correct": ["D"], "source": "G421"}, {"id": "C3-069", "category": 3, "topic": "Adversar", "difficulty": 2, "type": "multiple_choice", "question": "Când se încheie numărătoarea unui PIN (G421)?", "choices": ["Când robotul care face PIN devine el însuși PINNED", "Când robotul PINNED nu mai încearcă să se miște", "Când oricare robot s-a deplasat 2 ft față de locul inițierii PIN-ului pentru mai mult de 3 secunde", "Când roboții s-au separat cel puțin 2 ft pentru mai mult de 3 secunde"], "correct": ["A", "C", "D"], "source": "G421"}, {"id": "C3-070", "category": 3, "topic": "Adversar", "difficulty": 2, "type": "single_choice", "question": "Care este sancțiunea pentru un PIN mai lung de 3 secunde?", "choices": ["MAJOR FOUL și încă un MAJOR FOUL pentru fiecare 3 secunde în care situația nu e corectată", "YELLOW CARD", "MINOR FOUL per secundă", "VERBAL WARNING"], "correct": ["A"], "source": "G421"}, {"id": "C3-071", "category": 3, "topic": "Adversar", "difficulty": 2, "type": "single_choice", "question": "Un PIN poate fi realizat și transitiv (de ex. împingând adversarul într-un element de FIELD)?", "choices": ["Da", "Doar împotriva peretelui perimetral", "Doar în AUTO", "Nu, doar prin contact direct"], "correct": ["A"], "source": "G421"}, {"id": "C3-073", "category": 3, "topic": "Oameni", "difficulty": 2, "type": "single_choice", "question": "DRIVE COACH preia gamepad-ul în timpul meciului. Ce sancțiune primește echipa?", "choices": ["VERBAL WARNING; MAJOR FOUL și YELLOW CARD per meci dacă e STRATEGIC", "MINOR FOUL", "DISQUALIFIED", "Nicio sancțiune, DRIVE COACH face parte din DRIVE TEAM"], "correct": ["A"], "source": "G423"}, {"id": "C3-074", "category": 3, "topic": "Oameni", "difficulty": 2, "type": "single_choice", "question": "Ce sancțiune primește un DRIVE COACH care atinge STRATEGIC un SCORING ELEMENT?", "choices": ["MAJOR FOUL", "MINOR FOUL per instance", "YELLOW CARD", "Nicio sancțiune"], "correct": ["B"], "source": "G424"}, {"id": "C3-075", "category": 3, "topic": "Oameni", "difficulty": 2, "type": "multiple_choice", "question": "Care acțiuni ale unui membru al DRIVE TEAM încalcă G425 - \"DRIVE TEAMS, watch your reach\"?", "choices": ["Atingerea robotului cu cablul gamepad-ului", "Ridicarea unui NECTAR propriu ieșit de pe FIELD, din ALLIANCE AREA", "Lovirea deliberată a peretelui pentru a scoate elemente din FLOWER", "Atingerea unui SCORING ELEMENT care atinge un TILE"], "correct": ["A", "C", "D"], "source": "G425, G422"}, {"id": "C3-076", "category": 3, "topic": "Oameni", "difficulty": 2, "type": "single_choice", "question": "HUMAN PLAYER introduce un NECTAR pe FIELD fără TIP și cu 90 de secunde rămase. Ce sancțiune primește?", "choices": ["MINOR FOUL per NECTAR", "Nicio sancțiune", "YELLOW CARD", "MAJOR FOUL per NECTAR"], "correct": ["A"], "source": "G426"}, {"id": "C3-077", "category": 3, "topic": "Oameni", "difficulty": 2, "type": "single_choice", "question": "Ce sancțiune primește un HUMAN PLAYER care aruncă NECTAR direct spre un robot, fără ca acesta să atingă întâi TILE-ul din LOADING ZONE?", "choices": ["VERBAL WARNING", "MAJOR FOUL", "MINOR FOUL per NECTAR", "RED CARD"], "correct": ["C"], "source": "G427"}, {"id": "C3-078", "category": 3, "topic": "Oameni", "difficulty": 2, "type": "single_choice", "question": "Un membru al DRIVE TEAM scoate un POLLEN de pe FIELD în timpul meciului. Ce prevede G428?", "choices": ["Este permis dacă POLLEN e lângă perete", "MINOR FOUL per SCORING ELEMENT", "VERBAL WARNING", "MAJOR FOUL"], "correct": ["B"], "source": "G428"}, {"id": "C3-079", "category": 3, "topic": "Autoritate", "difficulty": 2, "type": "multiple_choice", "question": "Care afirmații despre Head REFEREE sunt corecte?", "choices": ["Trebuie să noteze regula încălcată când acordă un cartonaș", "Are autoritatea finală asupra jocului la eveniment", "Event Director poate anula o decizie a Head REFEREE", "Nu revizuiește video sau fotografii ale meciurilor, din nicio sursă"], "correct": ["A", "B", "D"], "source": "T401, 10.7"}, {"id": "C3-080", "category": 3, "topic": "Replay", "difficulty": 2, "type": "multiple_choice", "question": "Care dintre următoarele pot fi ARENA FAULT?", "choices": ["Defectarea cronometrului afișat", "Bateria descărcată a unui robot", "Elemente de FIELD rupte în joc normal", "Erori ale FIELD STAFF (cu excepțiile de la 10.8)"], "correct": ["A", "C", "D"], "source": "T201"}, {"id": "C3-081", "category": 3, "topic": "Replay", "difficulty": 2, "type": "single_choice", "question": "Când se rejoacă un meci afectat de un ARENA FAULT?", "choices": ["Când Head REFEREE consideră că a afectat rezultatul (câștigătorul sau RP-urile) și o echipă din alianța afectată cere rejucarea", "Întotdeauna", "Doar dacă ambele alianțe sunt de acord", "Niciodată în calificări"], "correct": ["A"], "source": "T201"}, {"id": "C3-082", "category": 3, "topic": "Replay", "difficulty": 3, "type": "multiple_choice", "question": "Care afirmații despre rejucarea unui meci sunt corecte?", "choices": ["Echipele pot schimba robotul cu unul nou", "Un robot DISABLED înainte de startul meciului original este DISABLED și la rejucare", "Pozițiile de start și elementele pre-loaded nu trebuie neapărat replicate", "Se folosește același FIELD, dacă nu e grav avariat"], "correct": ["B", "C", "D"], "source": "T202"}, {"category": 3, "difficulty": 1, "type": "single_choice", "topic": "Penalizari", "question": "Ce penalizare este aplicată pentru încălcarea regulii G422 - Once a MATCH starts, DRIVE TEAM members may not leave their designated ALLIANCE AREA", "source": "G422", "choices": ["Minor foul", "Major foul", "Verbal warning", "No penalty"], "correct": ["C"], "id": "C3-N4056F27A1FB6"}]};
+
+  // Pick exactly 20 random from C1, 20 from C2, 20 from C3
+  function pickQuestionsFromBank() {
+    const all = BIOBUZZ_BANK.questions;
+    const c1 = all.filter(q => q.category === 1);
+    const c2 = all.filter(q => q.category === 2);
+    const c3 = all.filter(q => q.category === 3);
+
+    const sampleC1 = shuffle(c1).slice(0, 20);
+    const sampleC2 = shuffle(c2).slice(0, 20);
+    const sampleC3 = shuffle(c3).slice(0, 20);
+
+    return shuffle([...sampleC1, ...sampleC2, ...sampleC3]).map(shuffleQuestionChoices);
+  }
+
+  // Start Quiz (Instant & Synchronous)
+  function startQuiz() {
+    if (quizActive) return;
+    studentName = $('studentName').value.trim();
+    questions = pickQuestionsFromBank();
+    if (!questions || questions.length < 60) {
+      alert('Eroare la generarea testului.');
+      return;
+    }
+
+    currentIndex = 0;
+    userAnswers = {};
+    checkedState = {};
+    questionPoints = {};
+    remainingSeconds = quizDurationSeconds;
+    quizDeadline = Date.now() + quizDurationSeconds * 1000;
+    timeSpentSeconds = 0;
+    quizActive = true;
+
+    $('entry').classList.add('hidden');
+    $('done').classList.add('hidden');
+    $('quiz').classList.remove('hidden');
+
+    buildNavGrid();
+    renderCurrentQuestion();
+    updateLiveStats();
+
+    // Start 20-min countdown
+    clearInterval(timerInterval);
+    updateTimerDisplay();
+    timerInterval = setInterval(onTimerTick, 1000);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function onTimerTick() {
+    if (!quizActive) return;
+    syncTimer();
+
+    if (remainingSeconds <= 0) {
+      finishQuiz();
+    }
+  }
+
+  // Derive elapsed time from the deadline, including delayed/background ticks.
+  function syncTimer() {
+    const remainingMs = Math.max(0, Math.min(quizDurationSeconds * 1000, quizDeadline - Date.now()));
+    remainingSeconds = Math.ceil(remainingMs / 1000);
+    timeSpentSeconds = Math.floor((quizDurationSeconds * 1000 - remainingMs) / 1000);
+    updateTimerDisplay();
+  }
+
+  document.addEventListener('visibilitychange', onTimerTick);
+  window.addEventListener('focus', onTimerTick);
+
+  function updateTimerDisplay() {
+    const display = $('timerDisplay');
+    display.textContent = formatTime(remainingSeconds);
+    if (remainingSeconds <= 180) { // under 3 min
+      display.classList.add('urgent');
+    } else {
+      display.classList.remove('urgent');
+    }
+  }
+
+  // Build the 60-item navigator grid
+  function buildNavGrid() {
+    const grid = $('gridNav');
+    grid.innerHTML = '';
+    questions.forEach((q, i) => {
+      const dot = document.createElement('button');
+      dot.type = 'button';
+      dot.className = 'q-dot' + (i === currentIndex ? ' active' : '');
+      dot.id = `navDot-${i}`;
+      dot.textContent = i + 1;
+      dot.title = `Întrebarea ${i + 1}`;
+      dot.addEventListener('click', () => {
+        jumpToQuestion(i);
+      });
+      grid.appendChild(dot);
+    });
+  }
+
+  function updateNavGridItem(idx) {
+    const dot = $(`navDot-${idx}`);
+    if (!dot) return;
+    const q = questions[idx];
+    dot.className = 'q-dot';
+    if (idx === currentIndex) dot.classList.add('active');
+
+    if (checkedState[q.id]) {
+      const pts = questionPoints[q.id] || 0;
+      if (pts >= 0.999) {
+        dot.classList.add('dot-correct');
+      } else if (pts > 0) {
+        dot.classList.add('dot-partial');
+      } else {
+        dot.classList.add('dot-wrong');
+      }
+    }
+  }
+
+  function updateAllNavDots() {
+    questions.forEach((_, i) => updateNavGridItem(i));
+    const answeredCount = Object.keys(checkedState).length;
+    $('navAnsweredCount').textContent = `${answeredCount} / 60 răspunse`;
+  }
+
+  // Jump to specific question index
+  function jumpToQuestion(index) {
+    onTimerTick();
+    if (!quizActive) return;
+    if (index < 0 || index >= questions.length) return;
+    currentIndex = index;
+    renderCurrentQuestion();
+    updateAllNavDots();
+    window.scrollTo({ top: $('quiz').offsetTop - 20, behavior: 'smooth' });
+  }
+
+  // Render question at currentIndex
+  function renderCurrentQuestion() {
+    const q = questions[currentIndex];
+    const isChecked = !!checkedState[q.id];
+
+    // Question number
+    $('currentQNum').textContent = currentIndex + 1;
+
+    $('qText').textContent = q.question;
+    const answerTypeHint = $('answerTypeHint');
+    if (q.type === 'multiple_choice') {
+      answerTypeHint.textContent = 'Alege mai multe răspunsuri.';
+      answerTypeHint.classList.remove('hidden');
+    } else if (q.type === 'single_choice') {
+      answerTypeHint.textContent = 'Alege un singur răspuns.';
+      answerTypeHint.classList.remove('hidden');
+    } else {
+      answerTypeHint.textContent = '';
+      answerTypeHint.classList.add('hidden');
+    }
+    $('selectionError').classList.add('hidden');
+
+    // Choices (all use checkboxes - student can choose 1 to 3 answers freely)
+    const container = $('choicesContainer');
+    container.innerHTML = '';
+    const letters = ['A', 'B', 'C', 'D'];
+    const currentSelected = userAnswers[q.id] || [];
+
+    q.choices.forEach((choiceText, cIdx) => {
+      const letter = letters[cIdx];
+      const label = document.createElement('label');
+      label.className = 'choice';
+      if (currentSelected.includes(letter)) label.classList.add('selected');
+      if (isChecked) label.classList.add('locked');
+
+      const input = document.createElement('input');
+      input.type = 'checkbox';
+      input.name = `choice_${q.id}`;
+      input.value = letter;
+      input.checked = currentSelected.includes(letter);
+      input.disabled = isChecked;
+
+      input.addEventListener('change', () => {
+        if (isChecked) return;
+
+        // Single-answer questions accept one choice; multiple-answer questions accept up to three.
+        if (input.checked) {
+          const checkedCount = container.querySelectorAll('input:checked').length;
+          const selectionLimit = q.type === 'single_choice' ? 1 : 3;
+          if (checkedCount > selectionLimit) {
+            input.checked = false;
+            const err = $('selectionError');
+            err.textContent = selectionLimit === 1
+              ? 'Pentru această întrebare poți selecta un singur răspuns.'
+              : 'Poți selecta cel mult 3 variante pentru o întrebare.';
+            err.classList.remove('hidden');
+            return;
+          }
+        }
+
+        $('selectionError').classList.add('hidden');
+        const selected = [...container.querySelectorAll('input:checked')].map(el => el.value);
+        userAnswers[q.id] = selected;
+
+        // update choice css selected classes
+        container.querySelectorAll('.choice').forEach(c => {
+          const inp = c.querySelector('input');
+          if (inp && inp.checked) c.classList.add('selected');
+          else c.classList.remove('selected');
+        });
+      });
+
+      const spanText = document.createElement('span');
+      spanText.className = 'choice-text';
+      spanText.innerHTML = `<span class="choice-letter">${letter}.</span> ${escapeHtml(choiceText)}`;
+
+      label.appendChild(input);
+      label.appendChild(spanText);
+
+      // If already checked, style correctly / wrongly
+      if (isChecked) {
+        const isCorrectChoice = q.correct.includes(letter);
+        const isUserChoice = currentSelected.includes(letter);
+
+        if (isCorrectChoice && isUserChoice) {
+          label.classList.add('is-correct');
+          const pill = document.createElement('span');
+          pill.className = 'choice-status-pill pill-correct';
+          pill.textContent = '✓ Corect';
+          label.appendChild(pill);
+        } else if (!isCorrectChoice && isUserChoice) {
+          label.classList.add('is-wrong');
+          const pill = document.createElement('span');
+          pill.className = 'choice-status-pill pill-wrong';
+          pill.textContent = '✗ Greșit (-0.66×p/t)';
+          label.appendChild(pill);
+        } else if (isCorrectChoice && !isUserChoice) {
+          label.classList.add('is-missed');
+          const pill = document.createElement('span');
+          pill.className = 'choice-status-pill pill-missed';
+          pill.textContent = '✓ Corect omis';
+          label.appendChild(pill);
+        }
+      }
+
+      container.appendChild(label);
+    });
+
+    // Feedback banner & action buttons
+    const feedbackBanner = $('feedbackBanner');
+    const btnCheck = $('btnCheck');
+    const btnNext = $('btnNext');
+
+    if (isChecked) {
+      btnCheck.classList.add('hidden');
+      btnNext.classList.remove('hidden');
+      btnNext.textContent = (currentIndex === questions.length - 1)
+        ? 'Finalizează testul & Vezi rezultate 🏁'
+        : `Următoarea întrebare (${currentIndex + 2}/60) ➔`;
+
+      renderFeedbackBanner(q);
+    } else {
+      btnCheck.classList.remove('hidden');
+      btnNext.classList.add('hidden');
+      feedbackBanner.classList.add('hidden');
+    }
+
+    updateLiveStats();
+    updateAllNavDots();
+  }
+
+  function renderFeedbackBanner(q) {
+    const banner = $('feedbackBanner');
+    banner.classList.remove('hidden');
+    const qRes = calculateQuestionScore(q, userAnswers[q.id] || []);
+    const pts = questionPoints[q.id] || 0;
+
+    if (qRes.isFull) {
+      banner.className = 'feedback-banner correct';
+      $('feedbackTitle').innerHTML = '<span>✓ RĂSPUNS COMPLET CORECT!</span> <span style="font-size:0.85rem;font-weight:normal;">(+1 punct)</span>';
+    } else if (pts > 0) {
+      banner.className = 'feedback-banner partial';
+      $('feedbackTitle').innerHTML = `<span>◐ RĂSPUNS PARȚIAL!</span> <span style="font-size:0.85rem;font-weight:normal;">(+${formatScore(pts)} puncte)</span>`;
+    } else {
+      banner.className = 'feedback-banner wrong';
+      $('feedbackTitle').innerHTML = '<span>✗ RĂSPUNS GREȘIT!</span> <span style="font-size:0.85rem;font-weight:normal;">(0 puncte)</span>';
+    }
+
+    const correctLettersStr = q.correct.join(', ');
+    const correctFullTexts = q.correct.map(letter => {
+      const idx = letter.charCodeAt(0) - 65;
+      return `<strong>${letter}</strong>: ${escapeHtml(q.choices[idx] || '')}`;
+    }).join('<br>');
+
+    let scoreCalcExplanation = '';
+    const t = q.correct.length;
+    scoreCalcExplanation = `
+      <div style="font-size: 0.85rem; margin-top: 10px; padding: 8px 12px; background: rgba(0,0,0,0.3); border-radius: 0; font-family: var(--mono); color: #f1e7e2;">
+        <strong>Calcul punctaj conform formulei (p = 1, t = ${t}):</strong><br>
+        • Răspunsuri corecte bifate: ${qRes.correctPicked} din ${t} &rarr; <strong>+${formatScore(qRes.gain)} pct</strong><br>
+        ${qRes.wrongPicked > 0 ? `• Răspunsuri greșite bifate: ${qRes.wrongPicked} &rarr; penalizare <strong>-${formatScore(qRes.penalty)} pct</strong> (${qRes.wrongPicked} &times; 0.66 &times; 1/${t})<br>` : ''}
+        • <strong>Punctaj acordat întrebării:</strong> ${formatScore(pts)} pct ${qRes.isZero && (qRes.gain - qRes.penalty < 0) ? '(scorul negativ este rotunjit la 0)' : ''}
+      </div>
+    `;
+
+    $('feedbackDetail').innerHTML = `
+      <div style="margin-top: 4px;">
+        <strong>Varianta corectă conform manualului:</strong> ${correctLettersStr}<br>
+        <div style="margin-top: 6px; padding: 6px 10px; background: rgba(0,0,0,0.25); border-left: 2px solid ${qRes.isFull ? 'var(--correct-border)' : (pts > 0 ? 'var(--partial-border)' : 'var(--wrong-border)')};">
+          ${correctFullTexts}
+        </div>
+        ${scoreCalcExplanation}
+      </div>
+    `;
+
+    $('feedbackSource').innerHTML = `📖 <strong>Referință regulament oficial BIOBUZZ:</strong> ${escapeHtml(q.source || 'Manual FTC BIOBUZZ')}`;
+  }
+
+  // Verify answer clicked
+  function checkAnswer() {
+    onTimerTick();
+    if (!quizActive) return;
+    const q = questions[currentIndex];
+    if (checkedState[q.id]) return;
+    const selected = userAnswers[q.id] || [];
+
+    if (!selected.length) {
+      $('selectionError').textContent = 'Alege cel puțin o variantă de răspuns înainte de a verifica.';
+      $('selectionError').classList.remove('hidden');
+      return;
+    }
+
+    $('selectionError').classList.add('hidden');
+
+    const result = calculateQuestionScore(q, selected);
+    checkedState[q.id] = true;
+    questionPoints[q.id] = result.score;
+    resetEndEarlyButton();
+
+    if (result.isFull) {
+      playFeedbackSound('correct');
+    } else if (result.score > 0) {
+      playFeedbackSound('partial');
+    } else {
+      playFeedbackSound('wrong');
+    }
+
+    renderCurrentQuestion();
+  }
+
+  function resetEndEarlyButton() {
+    const button = $('btnEndEarly');
+    button.dataset.confirmFinish = 'false';
+    button.textContent = 'Încheie testul';
+  }
+
+  // Next Question
+  function nextQuestion() {
+    onTimerTick();
+    if (!quizActive) return;
+    if (currentIndex < questions.length - 1) {
+      jumpToQuestion(currentIndex + 1);
+    } else {
+      finishQuiz();
+    }
+  }
+
+  function updateLiveStats() {
+    // Live points (summing float/fractional points)
+    let totalPoints = 0;
+    Object.values(questionPoints).forEach(p => { totalPoints += (p || 0); });
+    const answeredCount = Object.keys(checkedState).length;
+
+    $('liveScoreDisplay').textContent = `Scor: ${formatScore(totalPoints)} pct (${answeredCount}/60 răspunse)`;
+
+    // Progress bar
+    const pct = Math.round((answeredCount / questions.length) * 100);
+    $('progressBar').style.width = `${pct}%`;
+  }
+
+  // Finish Quiz and show Results
+  function finishQuiz() {
+    if (!quizActive) return;
+    syncTimer();
+    clearInterval(timerInterval);
+    timerInterval = null;
+    quizActive = false;
+
+    // Calculate scores
+    let totalPoints = 0;
+    let c1Points = 0, c2Points = 0, c3Points = 0;
+
+    questions.forEach(q => {
+      const pts = questionPoints[q.id] || 0;
+      totalPoints += pts;
+      if (q.category === 1) c1Points += pts;
+      else if (q.category === 2) c2Points += pts;
+      else if (q.category === 3) c3Points += pts;
+    });
+
+    $('quiz').classList.add('hidden');
+    $('done').classList.remove('hidden');
+    $('resultStatus').textContent = remainingSeconds === 0
+      ? 'Timp expirat · Test finalizat automat'
+      : 'Antrenament finalizat';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+
+    if (studentName) {
+      $('resultCandidateName').textContent = `Participant: ${studentName}`;
+      $('resultCandidateName').classList.remove('hidden');
+    } else {
+      $('resultCandidateName').classList.add('hidden');
+    }
+
+    $('finalScoreDisplay').textContent = `${formatScore(totalPoints)} / 60`;
+    const pctTotal = Math.round((totalPoints / 60) * 1000) / 10;
+    $('finalPercentageDisplay').textContent = `${pctTotal}% din punctajul maxim`;
+
+    // Time used
+    $('finalTimeUsed').textContent = formatTime(timeSpentSeconds);
+
+    // Category breakdowns
+    $('scoreC1').textContent = `${formatScore(c1Points)} / 20`;
+    $('pctC1').textContent = `${Math.round((c1Points / 20) * 100)}%`;
+
+    $('scoreC2').textContent = `${formatScore(c2Points)} / 20`;
+    $('pctC2').textContent = `${Math.round((c2Points / 20) * 100)}%`;
+
+    $('scoreC3').textContent = `${formatScore(c3Points)} / 20`;
+    $('pctC3').textContent = `${Math.round((c3Points / 20) * 100)}%`;
+
+    // Feedback message
+    let msg = '';
+    if (pctTotal >= 90) {
+      msg = '🏆 Excelent! Stăpânești regulamentul la nivel de Head Referee! Ești 100% pregătit pentru testul echipei.';
+    } else if (pctTotal >= 75) {
+      msg = '🎉 Foarte bine! Ai o înțelegere solidă a jocului BIOBUZZ. Mai aruncă o privire peste întrebările parțiale și greșite de mai jos.';
+    } else if (pctTotal >= 50) {
+      msg = '👍 Rezultat bun! Cunoști bazele, însă recomandăm să aprofundezi secțiunile unde ai pierdut puncte (în special penalizările).';
+    } else {
+      msg = '⚠️ Esti vai de steaua ta. Revizuiește greșelile și reia testul!';
+    }
+    $('finalFeedbackMessage').textContent = msg;
+
+    // Build Review Section
+    buildReviewSection('all');
+  }
+
+  // Build the review list
+  function buildReviewSection(filter) {
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+      btn.classList.toggle('active', btn.dataset.filter === filter);
+    });
+    const container = $('reviewCardsContainer');
+    container.innerHTML = '';
+
+    const letters = ['A', 'B', 'C', 'D'];
+    let fullCount = 0;
+    let partialCount = 0;
+    let zeroCount = 0;
+
+    questions.forEach(q => {
+      const pts = questionPoints[q.id] || 0;
+      if (pts >= 0.999) fullCount++;
+      else if (pts > 0) partialCount++;
+      else zeroCount++;
+    });
+
+    $('tabAll').textContent = `Toate (60)`;
+    $('tabFull').textContent = `Complet corecte (${fullCount})`;
+    $('tabPartial').textContent = `Parțiale (${partialCount})`;
+    $('tabZero').textContent = `Greșite / 0 pct (${zeroCount})`;
+
+    questions.forEach((q, i) => {
+      const pts = questionPoints[q.id] || 0;
+      const isAnswered = !!checkedState[q.id];
+      const isFull = pts >= 0.999;
+      const isPartial = pts > 0 && pts < 0.999;
+      const isZero = pts === 0;
+
+      if (filter === 'full' && !isFull) return;
+      if (filter === 'partial' && !isPartial) return;
+      if (filter === 'zero' && !isZero) return;
+
+      const userSel = userAnswers[q.id] || [];
+      const statusText = !isAnswered
+        ? (userSel.length ? 'Neverificat · 0 pct' : 'Fără răspuns · 0 pct')
+        : (isFull ? 'Complet corect · 1 pct' : (isPartial ? `Parțial · ${formatScore(pts)} pct` : 'Greșit · 0 pct'));
+      const statusBadge = `<span class="badge">${statusText}</span>`;
+      const card = document.createElement('article');
+      card.className = `review-card ${isFull ? 'correct-card' : (isPartial ? 'partial-card' : 'wrong-card')}`;
+
+      const header = document.createElement('div');
+      header.style.display = 'flex';
+      header.style.justifyContent = 'space-between';
+      header.style.alignItems = 'center';
+      header.style.marginBottom = '8px';
+      header.style.flexWrap = 'wrap';
+      header.style.gap = '8px';
+
+      header.innerHTML = `
+        <span class="eyebrow">Întrebarea ${i + 1}</span>
+        ${statusBadge}
+      `;
+
+      const title = document.createElement('h3');
+      title.style.fontSize = '1.05rem';
+      title.style.margin = '4px 0 12px';
+      title.style.color = '#fff';
+      title.textContent = q.question;
+
+      const choicesDiv = document.createElement('div');
+      choicesDiv.style.display = 'flex';
+      choicesDiv.style.flexDirection = 'column';
+      choicesDiv.style.gap = '6px';
+      choicesDiv.style.margin = '10px 0';
+
+      q.choices.forEach((choiceText, cIdx) => {
+        const letter = letters[cIdx];
+        const isCorr = q.correct.includes(letter);
+        const isChosen = userSel.includes(letter);
+
+        const choiceRow = document.createElement('div');
+        choiceRow.style.padding = '8px 12px';
+        choiceRow.style.fontSize = '0.9rem';
+        choiceRow.style.border = '1px solid';
+        choiceRow.style.marginBottom = '6px';
+
+        if (isCorr && isChosen) {
+          choiceRow.style.background = 'var(--correct-bg)';
+          choiceRow.style.borderColor = 'var(--correct-border)';
+          choiceRow.innerHTML = `<strong>✓ ${letter}.</strong> ${escapeHtml(choiceText)} <span style="float:right;color:#69f0ae;font-size:0.75rem;font-weight:bold;">ALES CORECT</span>`;
+        } else if (!isCorr && isChosen) {
+          choiceRow.style.background = 'var(--wrong-bg)';
+          choiceRow.style.borderColor = 'var(--wrong-border)';
+          choiceRow.innerHTML = `<strong>✗ ${letter}.</strong> ${escapeHtml(choiceText)} <span style="float:right;color:#ff8b80;font-size:0.75rem;font-weight:bold;">ALES GREȘIT (-0.66×p/t)</span>`;
+        } else if (isCorr && !isChosen) {
+          choiceRow.style.background = 'rgba(46, 204, 113, 0.12)';
+          choiceRow.style.borderColor = 'var(--correct-border)';
+          choiceRow.style.borderStyle = 'dashed';
+          choiceRow.innerHTML = `<strong>✓ ${letter}.</strong> ${escapeHtml(choiceText)} <span style="float:right;color:#69f0ae;font-size:0.75rem;font-weight:bold;">RĂSPUNS CORECT</span>`;
+        } else {
+          choiceRow.style.background = '#1c0906';
+          choiceRow.style.borderColor = '#4a1b12';
+          choiceRow.style.opacity = '0.65';
+          choiceRow.innerHTML = `<strong>${letter}.</strong> ${escapeHtml(choiceText)}`;
+        }
+
+        choicesDiv.appendChild(choiceRow);
+      });
+
+      const sourceDiv = document.createElement('div');
+      sourceDiv.className = 'subtle';
+      sourceDiv.style.fontFamily = 'var(--mono)';
+      sourceDiv.style.fontSize = '0.78rem';
+      sourceDiv.style.marginTop = '8px';
+      sourceDiv.innerHTML = `📖 <strong>Referință regulament:</strong> ${escapeHtml(q.source || 'Manual BIOBUZZ')} &nbsp;|&nbsp; <strong>Punctaj acordat:</strong> ${formatScore(pts)} / 1 pct`;
+
+      card.appendChild(header);
+      card.appendChild(title);
+      card.appendChild(choicesDiv);
+      card.appendChild(sourceDiv);
+      container.appendChild(card);
+    });
+
+    if (container.children.length === 0) {
+      container.innerHTML = `<p class="subtle" style="text-align: center; padding: 20px;">Nu există întrebări în acest filtru.</p>`;
+    }
+  }
+
+  function escapeHtml(str) {
+    if (!str) return '';
+    return String(str)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#039;');
+  }
+
+  // Keyboard Navigation: 1..4 or A..D to toggle choices; Enter to verify / next
+  document.addEventListener('keydown', e => {
+    if (!quizActive || e.defaultPrevented || e.repeat || e.isComposing || e.ctrlKey || e.altKey || e.metaKey) return;
+    const target = e.target;
+    if (target && (target.isContentEditable || target.closest('textarea, select, input:not([type="checkbox"])'))) return;
+
+    const key = e.key.toUpperCase();
+    const choiceMap = { '1': 'A', '2': 'B', '3': 'C', '4': 'D', 'A': 'A', 'B': 'B', 'C': 'C', 'D': 'D' };
+
+    if (choiceMap[key]) {
+      e.preventDefault();
+      onTimerTick();
+      if (!quizActive) return;
+      const letter = choiceMap[key];
+      const q = questions[currentIndex];
+      if (checkedState[q.id]) return;
+
+      const input = document.querySelector(`.choice input[value="${letter}"]`);
+      if (input) {
+        input.click();
+      }
+    } else if (e.key === 'Enter') {
+      // Let focused buttons perform their own action once via native activation.
+      if (target && target.closest('button, summary, a')) return;
+      e.preventDefault();
+      const q = questions[currentIndex];
+      if (!checkedState[q.id]) {
+        checkAnswer();
+      } else {
+        nextQuestion();
+      }
+    }
+  });
+
+  // Warn before accidental page reload while quiz is in progress
+  window.addEventListener('beforeunload', e => {
+    if (quizActive) {
+      e.preventDefault();
+      e.returnValue = '';
+    }
+  });
+
+  // Event Listeners
+  $('startBtn').addEventListener('click', startQuiz);
+  $('studentName').addEventListener('keydown', e => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      startQuiz();
+    }
+  });
+  $('btnCheck').addEventListener('click', checkAnswer);
+  $('btnNext').addEventListener('click', nextQuestion);
+
+  // Avoid window.confirm: embedded mobile browsers such as WhatsApp's preview
+  // may suppress native dialogs and leave this button appearing unresponsive.
+  $('btnEndEarly').addEventListener('click', () => {
+    const button = $('btnEndEarly');
+    if (button.dataset.confirmFinish === 'true') {
+      button.dataset.confirmFinish = 'false';
+      finishQuiz();
+      return;
+    }
+
+    button.dataset.confirmFinish = 'true';
+    button.textContent = 'Apasă din nou pentru a încheia testul';
+  });
+
+  $('btnRestart').addEventListener('click', () => {
+    $('done').classList.add('hidden');
+    $('entry').classList.remove('hidden');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+
+  $('btnScrollReview').addEventListener('click', () => {
+    $('reviewSection').scrollIntoView({ behavior: 'smooth' });
+  });
+
+  // Filter tabs
+  document.querySelectorAll('.tab-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      buildReviewSection(btn.dataset.filter);
+    });
+  });
+
+})();
+</script>
+</body>
+</html>
